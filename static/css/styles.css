@@ -1,0 +1,86 @@
+/* Estilos personalizados para Sastrería All Look — Paleta Oficial Uxintace:
+   #291C0E (Espresso Chocolate)
+   #6E473B (Chestnut Terracotta)
+   #A78D78 (Warm Taupe)
+   #BEB5A9 (Soft Greige)
+   #E1D4C2 (Warm Oat Cream)
+*/
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap');
+
+:root {
+  --palette-espresso: #291C0E;
+  --palette-chestnut: #6E473B;
+  --palette-taupe: #A78D78;
+  --palette-greige: #BEB5A9;
+  --palette-cream: #E1D4C2;
+  --palette-surface: #FAF7F2;
+  --palette-white: #FFFFFF;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--palette-surface);
+  color: var(--palette-espresso);
+}
+
+.font-serif-luxury {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Scrollbar estilizada en tonos de la paleta */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #F4EFEA;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--palette-greige);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--palette-taupe);
+}
+
+/* Efectos visuales para tarjetas del catálogo */
+.catalog-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.catalog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 28px -10px rgba(41, 28, 14, 0.16);
+}
+.catalog-img-container {
+  overflow: hidden;
+  position: relative;
+  background: #EFE9E0;
+}
+.catalog-img-container img {
+  transition: transform 0.4s ease;
+}
+.catalog-card:hover .catalog-img-container img {
+  transform: scale(1.04);
+}
+
+/* Estilos de impresión para facturas y recibos */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt-modal, #printable-receipt-modal * {
+    visibility: visible;
+  }
+  #printable-receipt-modal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

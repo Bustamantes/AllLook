@@ -1,0 +1,14 @@
+# Entornos virtuales y Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Base de datos local SQLite (se inicializa automáticamente por el sistema)
+data/*.db
+data/*.sqlite3
+
+# Logs y temporales
+*.log
+.DS_Store
