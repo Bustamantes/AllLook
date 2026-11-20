@@ -38,9 +38,9 @@ docker compose up --build -d
 
 ### 2. Acceder a las Plataformas Web
 Una vez iniciado el contenedor, acceda desde el navegador:
-- **Portal de Clientes:** [http://localhost:8080/](http://localhost:8080/)
-- **Portal del Taller & Personal:** [http://localhost:8080/taller](http://localhost:8080/taller)
-- **Documentación Interactiva de APIs (Swagger/OpenAPI):** [http://localhost:8080/docs](http://localhost:8080/docs)
+- **Portal de Clientes:** [http://localhost:8090/](http://localhost:8090/)
+- **Portal del Taller & Personal:** [http://localhost:8090/taller](http://localhost:8090/taller)
+- **Documentación Interactiva de APIs (Swagger/OpenAPI):** [http://localhost:8090/docs](http://localhost:8090/docs)
 
 ### 3. Comandos Útiles
 - **Ver logs en tiempo real:**
@@ -63,7 +63,7 @@ Una vez iniciado el contenedor, acceda desde el navegador:
 ```
 AllLook/
 ├── Dockerfile                  # Imagen Docker optimizada (Python 3.11-slim)
-├── docker-compose.yml          # Configuración de Docker Compose y puertos (8080)
+├── docker-compose.yml          # Configuración de Docker Compose y puertos (8090)
 ├── requirements.txt            # Dependencias del backend (FastAPI, Uvicorn, Pydantic)
 ├── .dockerignore               # Archivos excluidos de la compilación
 ├── README.md                   # Documentación técnica del proyecto All Look
