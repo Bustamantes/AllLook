@@ -3,14 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: alllook_web
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "${PORT:-8080}:8080"
     volumes:
-      - ./data:/app/data
-      - ./static:/app/static
-      - ./app:/app/app
+      - alllook_data:/app/data
     environment:
       - PORT=8080
       - DATABASE_PATH=/app/data/alllook.db
@@ -20,3 +17,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+
+volumes:
+  alllook_data:
