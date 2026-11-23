@@ -97,13 +97,13 @@ def seed_database():
             ("CONF-2026-001", "Carlos Mendoza González", "+507 6234-8891", "8-745-1123",
              "Traje Formal 2 Piezas a Medida", "Boda de su Hermana", "Lana Italiana Super 120s (Azul Marino)",
              json.dumps(m1), 480.00, 240.00, 240.00, (today - timedelta(days=8)).strftime("%Y-%m-%d"),
-             delivery_1, interim_1, "Pendiente", 1, "Corte (Patronista)", "Mtro. Arístides Vega",
+             delivery_1, interim_1, "Pendiente", 1, "Corte (Patronista)", "Sastre & Patronista",
              "Pendiente", None, "Pendiente", None, 0, "En Proceso", "Cliente eligió forro guinda personalizado."),
 
             ("CONF-2026-002", "Dra. Sofía Chen Morales", "+507 6890-1244", "8-820-449",
              "Vestido de Gala Escote Reina", "Graduación de Honor Universitaria", "Seda Salvaje Tornasol (Borgoña)",
              json.dumps(m2), 390.00, 195.00, 195.00, (today - timedelta(days=15)).strftime("%Y-%m-%d"),
-             delivery_2, interim_2, "Medidas Validadas", 1, "Control de Calidad", "Sra. Carmen Villarreal",
+             delivery_2, interim_2, "Medidas Validadas", 1, "Control de Calidad", "Control de Calidad",
              "Aprobado", "Costuras impecables, simetría perfecta en escote y bastilla invisible realizada.",
              "Pendiente", None, 0, "En Proceso", "Prueba de 15 días realizada; medidas estables sin variación de peso."),
 
@@ -111,7 +111,7 @@ def seed_database():
              "Traje Ejecutivo 3 Piezas (Con Chaleco)", "Congreso de Ingeniería", "Gabardina Inglesa Elástica (Negro)",
              json.dumps(m3), 520.00, 260.00, 260.00, (today - timedelta(days=25)).strftime("%Y-%m-%d"),
              (today - timedelta(days=6)).strftime("%Y-%m-%d"), (today - timedelta(days=21)).strftime("%Y-%m-%d"),
-             "Medidas Validadas", 1, "Terminado / Listo para Entrega", "Mtro. Arístides Vega",
+             "Medidas Validadas", 1, "Terminado / Listo para Entrega", "Sastre & Patronista",
              "Aprobado", "Aprobado 100%. Medidas exactas.", "Pendiente", ready_date_3, 6, "Listo para Retiro",
              "Prenda en funda protectora #14. Pendiente cobro de saldo ($260.00). Primer aviso enviado.")
         ]

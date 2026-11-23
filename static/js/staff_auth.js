@@ -7,46 +7,46 @@ const STAFF_STORAGE_KEY = 'alllook_staff_active_user';
 const STAFF_PROFILES = {
   admin: {
     id: "EMP-ADMIN",
-    name: "Geralis Garrido",
+    name: "Administrador General",
     role: "admin",
     role_name: "Administrador General",
-    initials: "GG",
+    initials: "AD",
     email: "admin@alllook.com",
     badge_color: "#291C0E"
   },
   sastre: {
     id: "EMP-SASTRE",
-    name: "Mtro. Arístides Vega",
+    name: "Sastre & Patronista",
     role: "sastre",
     role_name: "Sastre & Patronista",
-    initials: "AV",
+    initials: "SP",
     email: "sastre@alllook.com",
     badge_color: "#6E473B"
   },
   mostrador: {
     id: "EMP-MOSTRADOR",
-    name: "Elena Morales",
+    name: "Mostrador & Cobros",
     role: "mostrador",
     role_name: "Mostrador & Cobros",
-    initials: "EM",
+    initials: "MC",
     email: "mostrador@alllook.com",
     badge_color: "#A78D78"
   },
   calidad: {
     id: "EMP-CALIDAD",
-    name: "Roberto Chen",
+    name: "Control de Calidad",
     role: "calidad",
-    role_name: "Control de Calidad (QC)",
-    initials: "RC",
+    role_name: "Control de Calidad",
+    initials: "QC",
     email: "calidad@alllook.com",
     badge_color: "#6E473B"
   },
   inventario: {
     id: "EMP-INV",
-    name: "Mateo Rivas",
+    name: "Analista de Inventario",
     role: "inventario",
-    role_name: "Analista Inventario 30%",
-    initials: "MR",
+    role_name: "Analista de Inventario",
+    initials: "AI",
     email: "inventario@alllook.com",
     badge_color: "#291C0E"
   }

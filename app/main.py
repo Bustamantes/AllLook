@@ -51,60 +51,60 @@ def startup_event():
 INTERNAL_STAFF_ACCOUNTS = {
     "admin": {
         "id": "USR-001",
-        "name": "Geralis Garrido",
+        "name": "Administrador General",
         "email": "admin@alllook.com",
         "role": "admin",
         "role_name": "Administrador General",
         "department": "Dirección & Administración",
-        "initials": "GG",
+        "initials": "AD",
         "color": "#6E473B",
         "permissions": ["all"],
         "default_view": "/taller"
     },
     "sastre": {
         "id": "USR-002",
-        "name": "Mtro. Arístides Vega",
+        "name": "Sastre & Patronista",
         "email": "sastre@alllook.com",
         "role": "sastre",
-        "role_name": "Maestro Sastre & Patronista",
+        "role_name": "Sastre & Patronista",
         "department": "Taller de Corte y Confección",
-        "initials": "AV",
+        "initials": "SP",
         "color": "#291C0E",
         "permissions": ["custom_orders", "alterations", "quality_control"],
         "default_view": "/taller"
     },
     "mostrador": {
         "id": "USR-003",
-        "name": "Elena Morales",
+        "name": "Mostrador & Cobros",
         "email": "mostrador@alllook.com",
         "role": "mostrador",
-        "role_name": "Encargada de Mostrador & Cobros",
+        "role_name": "Mostrador & Cobros",
         "department": "Atención al Cliente & Facturación",
-        "initials": "EM",
+        "initials": "MC",
         "color": "#A78D78",
         "permissions": ["ready_sales", "rentals", "invoices", "pickups"],
         "default_view": "/taller"
     },
     "calidad": {
         "id": "USR-004",
-        "name": "Roberto Chen",
+        "name": "Control de Calidad",
         "email": "calidad@alllook.com",
         "role": "calidad",
-        "role_name": "Inspector de Control de Calidad",
+        "role_name": "Control de Calidad",
         "department": "Control de Calidad & Acabados",
-        "initials": "RC",
+        "initials": "QC",
         "color": "#6E473B",
         "permissions": ["quality_control", "rental_inspection"],
         "default_view": "/taller"
     },
     "inventario": {
         "id": "USR-005",
-        "name": "Mateo Rivas",
+        "name": "Analista de Inventario",
         "email": "inventario@alllook.com",
         "role": "inventario",
-        "role_name": "Analista de Inventario & Telas",
+        "role_name": "Analista de Inventario",
         "department": "Abastecimiento & Proveedores",
-        "initials": "MR",
+        "initials": "AI",
         "color": "#291C0E",
         "permissions": ["inventory", "purchase_orders"],
         "default_view": "/taller"
@@ -1091,13 +1091,10 @@ def serve_client():
     return {"message": "All Look Sastrería — Portal de Clientes"}
 
 @app.get("/taller")
-@app.get("/empleados")
-@app.get("/admin")
 def serve_workshop():
-    """2. Web Oficial para la Vista de Trabajadores y Usuarios del Taller
+    """Web Oficial para la Vista de Trabajadores y Personal del Taller
     (Tablero general, corte y costura, control de calidad, insumos al 30% y facturación)."""
     taller_path = os.path.join(static_dir, "taller.html")
     if os.path.exists(taller_path):
         return FileResponse(taller_path)
-    # Si no existe aún taller.html, respaldo en index.html
     return FileResponse(os.path.join(static_dir, "index.html"))

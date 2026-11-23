@@ -38,7 +38,7 @@ class CustomOrderCreate(BaseModel):
     advance_payment: float  # Deberá ser >= 50%
     delivery_date: str      # YYYY-MM-DD
     weight_clause_acknowledged: bool = True
-    assigned_tailor: Optional[str] = "Mtro. Arístides Vega"
+    assigned_tailor: Optional[str] = "Sastre & Patronista"
     payment_method: str = "Tarjeta de Débito/Crédito"
     notes: Optional[str] = ""
 
