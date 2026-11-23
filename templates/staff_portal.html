@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>All Look — Sistema Interno de Taller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-[#FAF7F2] text-[#291C0E] antialiased min-h-screen">
+
+  <!-- ========================================================== -->
+  <!-- PANTALLA 1: LOGIN OBLIGATORIO DE PERSONAL -->
+  <!-- ========================================================== -->
+  <div id="staff-login-screen" class="min-h-screen flex items-center justify-center p-4 bg-[#FAF7F2]">
+    <div class="w-full max-w-md bg-white rounded-3xl border border-[#BEB5A9] shadow-xl p-8 space-y-6">
+      <div class="flex flex-col items-center text-center space-y-3 border-b border-[#BEB5A9]/40 pb-6">
+        <div class="w-16 h-16 rounded-2xl overflow-hidden border border-[#BEB5A9] shadow-sm bg-white">
+          <img src="/static/img/logo.jpg" alt="All Look" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <span class="px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#291C0E] text-[#E1D4C2]">
+            Acceso Privado de Taller
+          </span>
+          <h1 class="font-serif-luxury text-2xl font-bold text-[#291C0E] mt-2">Sastrería All Look</h1>
+          <p class="text-xs text-[#6E473B] mt-1">Ingrese sus credenciales asignadas por Administración.</p>
+        </div>
+      </div>
+
+      <div id="staff-login-error" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold"></div>
+
+      <form onsubmit="handleStaffLogin(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Usuario de Rol *</label>
+          <input type="text" id="login-username" required autocomplete="username" placeholder="Ej. admin, mostrador, sastre..."
+                 class="w-full px-4 py-3 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white focus:outline-none focus:border-[#6E473B]">
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Contraseña *</label>
+          <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••"
+                 class="w-full px-4 py-3 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white focus:outline-none focus:border-[#6E473B]">
+        </div>
+
+        <button type="submit" id="login-submit-btn"
+                class="w-full py-3.5 rounded-xl bg-[#291C0E] hover:bg-[#6E473B] text-white font-bold text-sm transition flex items-center justify-center space-x-2">
+          <i data-lucide="lock" class="w-4 h-4"></i>
+          <span>Ingresar al Sistema del Taller</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- PANTALLA 2: WORKSPACE INTERNO (TRAS AUTENTICACIÓN) -->
+  <!-- ========================================================== -->
+  <div id="staff-workspace" class="hidden min-h-screen flex flex-col md:flex-row">
+
+    <!-- SIDEBAR DINÁMICA SEGÚN PERMISOS -->
+    <aside class="w-full md:w-72 bg-[#291C0E] text-[#E1D4C2] flex flex-col shrink-0 border-r border-[#422F1C] select-none">
+      <div class="p-6 border-b border-[#422F1C] flex items-center space-x-3">
+        <div class="w-11 h-11 rounded-xl overflow-hidden bg-white border border-[#422F1C] shrink-0">
+          <img src="/static/img/logo.jpg" alt="All Look" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <h2 class="font-serif-luxury text-xl font-bold text-white leading-tight">All Look</h2>
+          <span class="text-[10px] uppercase tracking-widest text-[#BEB5A9] font-bold">Sistema Interno</span>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-b border-[#422F1C] bg-[#362514]">
+        <span class="text-[10px] uppercase tracking-wider text-[#A78D78] font-bold block">Rol Conectado</span>
+        <strong id="sidebar-role-label" class="text-sm text-white block truncate mt-0.5"></strong>
+      </div>
+
+      <nav id="staff-sidebar-nav" class="flex-1 px-4 py-5 space-y-1.5 overflow-y-auto">
+        <!-- Generado dinámicamente según permisos -->
+      </nav>
+
+      <div class="p-4 border-t border-[#422F1C]">
+        <button onclick="handleStaffLogout()" class="w-full py-2.5 px-4 rounded-xl bg-[#422F1C] hover:bg-rose-900 text-[#E1D4C2] hover:text-white text-xs font-bold transition flex items-center justify-center space-x-2">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <header class="bg-white border-b border-[#BEB5A9]/50 px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sticky top-0 z-20">
+        <div>
+          <h1 id="ws-view-title" class="text-xl font-bold text-[#291C0E]">Panel Operativo</h1>
+          <p id="ws-view-subtitle" class="text-xs text-[#6E473B]"></p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Selector de Vista Previa (Solo Administrador) -->
+          <div id="admin-preview-bar" class="hidden flex items-center space-x-2 bg-[#FAF7F2] border border-[#BEB5A9] px-3 py-1.5 rounded-xl text-xs">
+            <span class="font-bold text-[#6E473B]">Previsualizar rol:</span>
+            <select id="admin-preview-select" onchange="changeAdminPreviewRole()" class="bg-white border border-[#BEB5A9] rounded-lg px-2 py-1 text-xs font-semibold text-[#291C0E]">
+              <option value="">Mi vista completa (Admin)</option>
+            </select>
+          </div>
+
+          <button onclick="reloadActiveView()" class="px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] hover:bg-[#E1D4C2] text-xs font-bold text-[#291C0E] flex items-center space-x-1.5 transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Actualizar</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Aviso de modo preview -->
+      <div id="preview-warning-banner" class="hidden mx-6 mt-4 p-3 rounded-xl bg-[#E1D4C2] border border-[#6E473B] text-xs font-bold text-[#291C0E] flex items-center justify-between">
+        <span id="preview-warning-text"></span>
+        <button onclick="resetAdminPreview()" class="px-3 py-1 rounded-lg bg-[#291C0E] text-white text-[11px]">Salir de Vista Previa</button>
+      </div>
+
+      <div class="p-6 max-w-7xl w-full mx-auto space-y-6">
+
+        <!-- ========================================================== -->
+        <!-- VISTA 1: MOSTRADOR / CAJA -->
+        <!-- ========================================================== -->
+        <section id="view-mostrador" class="ws-view hidden space-y-6">
+          <div class="flex flex-wrap gap-2 border-b border-[#BEB5A9]/50 pb-4">
+            <button onclick="switchMostradorTab('web')" id="m-tab-web" class="m-tab px-4 py-2 rounded-xl text-xs font-bold bg-[#6E473B] text-white">Solicitudes Web (<span id="m-count-web">0</span>)</button>
+            <button onclick="switchMostradorTab('nuevo')" id="m-tab-nuevo" class="m-tab px-4 py-2 rounded-xl text-xs font-bold bg-white border border-[#BEB5A9] text-[#291C0E]">+ Registrar Pedido en Caja</button>
+            <button onclick="switchMostradorTab('listas')" id="m-tab-listas" class="m-tab px-4 py-2 rounded-xl text-xs font-bold bg-white border border-[#BEB5A9] text-[#291C0E]">Listas para Contactar / Ajustes (<span id="m-count-listas">0</span>)</button>
+            <button onclick="switchMostradorTab('proceso')" id="m-tab-proceso" class="m-tab px-4 py-2 rounded-xl text-xs font-bold bg-white border border-[#BEB5A9] text-[#291C0E]">Seguimiento en Taller (<span id="m-count-proceso">0</span>)</button>
+          </div>
+
+          <!-- Subpanel 1: Solicitudes Web -->
+          <div id="m-panel-web" class="m-panel space-y-4"></div>
+
+          <!-- Subpanel 2: Registrar Pedido en Caja -->
+          <div id="m-panel-nuevo" class="m-panel hidden bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-5">
+            <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Registrar Pedido Inicial en Mostrador / Caja</h3>
+            <form id="form-mostrador-new" onsubmit="submitMostradorNewTicket(event)" class="space-y-4 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Tipo de Servicio *</label>
+                  <select id="mn-type" onchange="updateMostradorNewRules()" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                    <option value="Confección a la Medida">Confección a la Medida</option>
+                    <option value="Pieza de Exhibición">Pieza de Exhibición (con o sin ajuste)</option>
+                    <option value="Arreglo Menor">Arreglo Menor sobre Prenda</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Pieza de Catálogo (Opcional)</label>
+                  <select id="mn-catalog-item" onchange="prefillFromCatalogItem()" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                    <option value="">-- Ninguna / Producto Personalizado --</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Tela / Material</label>
+                  <select id="mn-fabric" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                    <option value="">Por definir con Sastre Patronista</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Nombre del Cliente *</label>
+                  <input type="text" id="mn-name" required placeholder="Ej. Carlos Mendoza" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Teléfono *</label>
+                  <input type="tel" id="mn-phone" required placeholder="+507 6234-8891" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Cédula / Pasaporte</label>
+                  <input type="text" id="mn-idcard" placeholder="8-745-1123" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Descripción de la Prenda / Pedido *</label>
+                  <input type="text" id="mn-desc" required placeholder="Ej. Traje 2 Piezas Azul Marino" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Ocasión / Notas Iniciales</label>
+                  <input type="text" id="mn-notes" placeholder="Ej. Boda, solicitud de solapa pico..." class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-2 border-t border-[#BEB5A9]/40">
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Precio Total ($) *</label>
+                  <input type="number" step="0.01" min="1" id="mn-total" value="400" oninput="updateMostradorNewRules()" required class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono font-bold">
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Anticipo Recibido ($) *</label>
+                  <input type="number" step="0.01" min="0" id="mn-advance" value="200" required class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono font-bold">
+                  <span id="mn-advance-hint" class="text-[10px] font-bold text-[#6E473B]">Mínimo 50%: $200.00</span>
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Fecha de Entrega *</label>
+                  <input type="date" id="mn-delivery" onchange="updateMostradorNewRules()" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                  <span id="mn-interim-hint" class="text-[10px] font-semibold text-[#6E473B]">Cita 15 días antes: -</span>
+                </div>
+                <div>
+                  <label class="block font-bold text-[#291C0E] mb-1">Método de Pago</label>
+                  <select id="mn-payment" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+                    <option value="Tarjeta de Débito/Crédito">Tarjeta de Débito/Crédito</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Transferencia / Yappy">Transferencia / Yappy</option>
+                  </select>
+                </div>
+              </div>
+
+              <label id="mn-clause-wrap" class="flex items-start space-x-2.5 p-3 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/60 cursor-pointer">
+                <input type="checkbox" id="mn-clause" checked class="mt-0.5 h-4 w-4 text-[#6E473B]">
+                <span>Cliente informado de la cita de verificación 15 días antes y de que el taller no asume variaciones de peso salvo caso médico.</span>
+              </label>
+
+              <div class="flex justify-end">
+                <button type="submit" class="px-6 py-3 rounded-xl bg-[#6E473B] hover:bg-[#291C0E] text-white font-bold">
+                  Registrar Orden y Enviar al Sastre Patronista
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Subpanel 3: Listas para Contactar y Ajustes -->
+          <div id="m-panel-listas" class="m-panel hidden space-y-4"></div>
+
+          <!-- Subpanel 4: Seguimiento en Taller -->
+          <div id="m-panel-proceso" class="m-panel hidden space-y-4"></div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- VISTA 2: SASTRE PATRONISTA -->
+        <!-- ========================================================== -->
+        <section id="view-sastre" class="ws-view hidden space-y-6">
+          <div class="p-4 rounded-2xl bg-white border border-[#BEB5A9] text-xs text-[#6E473B] flex flex-wrap items-center justify-between gap-3">
+            <span><strong>Deberes del Sastre Patronista:</strong> Registrar medidas exactas en la orden del mostrador, solicitar telas necesarias al Analista de Inventario y enviar la pieza terminada a Control de Calidad.</span>
+            <span id="sastre-count-badge" class="px-3 py-1 rounded-full bg-[#291C0E] text-white font-bold">0 órdenes en cola</span>
+          </div>
+          <div id="sastre-queue-list" class="space-y-4"></div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- VISTA 3: ANALISTA DE INVENTARIO (TELAS Y REORDEN 30%) -->
+        <!-- ========================================================== -->
+        <section id="view-inventario" class="ws-view hidden space-y-6">
+          <div class="bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Solicitudes de Telas del Sastre Patronista</h3>
+              <span id="inv-req-pending-count" class="px-3 py-1 rounded-full text-xs font-bold bg-[#6E473B] text-white">0 pendientes</span>
+            </div>
+            <div id="inv-fabric-requests-list" class="space-y-3"></div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-4">
+            <div>
+              <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Existencias de Telas e Insumos (Regla del 30%)</h3>
+              <p class="text-xs text-[#6E473B]">Solo se habilitan órdenes de compra a proveedores cuando el inventario cae al 30% o menos.</p>
+            </div>
+            <div id="inv-stock-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-4">
+            <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Órdenes de Compra a Proveedores</h3>
+            <div id="inv-po-list" class="space-y-2.5"></div>
+          </div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- VISTA 4: CONTROL DE CALIDAD -->
+        <!-- ========================================================== -->
+        <section id="view-calidad" class="ws-view hidden space-y-6">
+          <div class="p-4 rounded-2xl bg-white border border-[#BEB5A9] text-xs text-[#6E473B] flex flex-wrap items-center justify-between gap-3">
+            <span><strong>Regla 3:</strong> Ninguna prenda pasa a Mostrador para entrega sin ser inspeccionada y APROBADA por Control de Calidad.</span>
+            <span id="calidad-count-badge" class="px-3 py-1 rounded-full bg-[#6E473B] text-white font-bold">0 por revisar</span>
+          </div>
+          <div id="calidad-pending-list" class="space-y-4"></div>
+          <div class="bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-3">
+            <h3 class="font-serif-luxury text-lg font-bold text-[#291C0E]">Historial Reciente de Inspecciones</h3>
+            <div id="calidad-recent-list" class="space-y-2"></div>
+          </div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- VISTA 5: FACTURACIÓN Y COBROS -->
+        <!-- ========================================================== -->
+        <section id="view-facturacion" class="ws-view hidden space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-white rounded-2xl border border-[#BEB5A9] p-5">
+              <span class="text-xs text-[#A78D78] font-bold uppercase">Total Recaudado (Facturas)</span>
+              <div id="fac-total-collected" class="text-3xl font-black text-[#291C0E] font-mono mt-1">$0.00</div>
+            </div>
+            <div class="bg-white rounded-2xl border border-[#BEB5A9] p-5">
+              <span class="text-xs text-[#A78D78] font-bold uppercase">Saldos Pendientes en Piezas Listas</span>
+              <div id="fac-total-pending" class="text-3xl font-black text-[#6E473B] font-mono mt-1">$0.00</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-4">
+            <div>
+              <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Pedidos Listos para Cobro de Saldo & Entrega</h3>
+              <p class="text-xs text-[#6E473B]">Regla 5: La liquidación completa del saldo restante es obligatoria antes de entregar la prenda.</p>
+            </div>
+            <div id="fac-ready-list" class="space-y-3"></div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-[#BEB5A9] p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Historial de Comprobantes Emitidos</h3>
+              <div class="flex items-center space-x-2">
+                <input type="text" id="fac-search-input" placeholder="Buscar factura, cliente u orden..." class="px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] text-xs">
+                <button onclick="loadFacturacionView()" class="px-4 py-2 rounded-xl bg-[#291C0E] text-white text-xs font-bold">Buscar</button>
+              </div>
+            </div>
+            <div id="fac-invoices-list" class="space-y-2.5"></div>
+          </div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- VISTA 6: CATÁLOGO DE PIEZAS WEB -->
+        <!-- ========================================================== -->
+        <section id="view-catalogo_piezas" class="ws-view hidden space-y-6">
+          <div class="flex items-center justify-between bg-white rounded-2xl border border-[#BEB5A9] p-5">
+            <div>
+              <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Piezas Exhibidas en la Web Pública</h3>
+              <p class="text-xs text-[#6E473B]">Administra precios, existencias, tallas y desglose visible para los clientes.</p>
+            </div>
+            <button onclick="openCatalogModal()" class="px-4 py-2.5 rounded-xl bg-[#6E473B] hover:bg-[#291C0E] text-white text-xs font-bold">
+              + Nueva Pieza
+            </button>
+          </div>
+          <div id="admin-catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        </section>
+
+        <!-- ========================================================== -->
+        <!-- VISTA 7: ADMINISTRACIÓN DE TRABAJADORES Y PERMISOS -->
+        <!-- ========================================================== -->
+        <section id="view-admin_usuarios" class="ws-view hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white rounded-2xl border border-[#BEB5A9] p-6">
+            <div>
+              <h3 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Control de Trabajadores y Vistas Asignadas</h3>
+              <p class="text-xs text-[#6E473B] mt-1">
+                Active o desactive exactamente qué módulos puede ver y operar cada trabajador. Los cambios se aplican de inmediato tanto en la interfaz como en los permisos del servidor.
+              </p>
+            </div>
+            <button onclick="openCreateWorkerModal()" class="px-5 py-3 rounded-xl bg-[#291C0E] hover:bg-[#6E473B] text-white text-xs font-bold shrink-0">
+              + Nuevo Trabajador
+            </button>
+          </div>
+
+          <div id="admin-workers-list" class="space-y-4"></div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODALES INTERNOS -->
+  <!-- ========================================================== -->
+
+  <!-- Modal: Confirmar Solicitud Web (Mostrador) -->
+  <div id="modal-confirm-web" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 border border-[#BEB5A9] shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Confirmar Solicitud Web</h3>
+        <button onclick="closeModal('modal-confirm-web')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitConfirmWeb(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="cw-ticket-id">
+        <input type="hidden" id="cw-order-type">
+        <div id="cw-summary" class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/60"></div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Precio Total Acordado ($) *</label>
+            <input type="number" step="0.01" min="1" id="cw-total" oninput="updateConfirmWebHint()" required class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Anticipo Cobrado ($)</label>
+            <input type="number" step="0.01" min="0" id="cw-advance" required class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono font-bold">
+            <span id="cw-advance-hint" class="text-[10px] font-bold text-[#6E473B]"></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Fecha de Entrega Pactada</label>
+            <input type="date" id="cw-delivery" onchange="updateConfirmWebHint()" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+            <span id="cw-interim-hint" class="text-[10px] font-semibold text-[#6E473B]"></span>
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Método de Pago</label>
+            <select id="cw-payment" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+              <option value="Tarjeta de Débito/Crédito">Tarjeta de Débito/Crédito</option>
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia / Yappy">Transferencia / Yappy</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" id="cw-send-tailor" checked class="h-4 w-4 text-[#6E473B]">
+          <span class="font-semibold">Enviar al Sastre Patronista (toma de medidas / confección / ajuste)</span>
+        </label>
+
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" id="cw-clause" checked class="h-4 w-4 text-[#6E473B]">
+          <span>Cláusula de variación de medidas (cita 15 días antes) aceptada</span>
+        </label>
+
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Notas de Mostrador</label>
+          <input type="text" id="cw-notes" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('modal-confirm-web')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#6E473B] text-white font-bold">Confirmar Pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Reenviar al Sastre por Arreglo sin Costo (Mostrador) -->
+  <div id="modal-return-tailor" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 border border-[#BEB5A9] shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Reenviar al Sastre (Sin Costo)</h3>
+        <button onclick="closeModal('modal-return-tailor')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitReturnToTailor(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="rt-ticket-id">
+        <p class="text-[#6E473B]">Regla 4: Si al probar la pieza el cliente necesita un arreglo menor, regresa al Sastre Patronista sin costo adicional.</p>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Detalle exacto del arreglo solicitado *</label>
+          <textarea id="rt-notes" rows="3" required placeholder="Ej. Entallar 1.5 cm en cintura del saco..." class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></textarea>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('modal-return-tailor')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#6E473B] text-white font-bold">Reenviar al Sastre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Registrar Medidas Exactas (Sastre Patronista) -->
+  <div id="modal-sastre-measurements" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-4 border border-[#BEB5A9] shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Ficha de Medidas Exactas — <span id="sm-ticket-label" class="font-mono"></span></h3>
+        <button onclick="closeModal('modal-sastre-measurements')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitSastreMeasurements(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="sm-ticket-id">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div><label class="block font-bold mb-1">Cuello (cm)</label><input type="number" step="0.5" id="sm-cuello" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Pecho / Busto (cm)</label><input type="number" step="0.5" id="sm-pecho" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Cintura (cm)</label><input type="number" step="0.5" id="sm-cintura" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Cadera (cm)</label><input type="number" step="0.5" id="sm-cadera" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Hombros (cm)</label><input type="number" step="0.5" id="sm-hombro_a_hombro" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Largo Manga (cm)</label><input type="number" step="0.5" id="sm-largo_manga" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Largo Pantalón/Falda</label><input type="number" step="0.5" id="sm-largo_pantalon" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Tiro / Talle (cm)</label><input type="number" step="0.5" id="sm-tiro" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Notas de Patronaje y Confección</label>
+          <textarea id="sm-notes" rows="2" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></textarea>
+        </div>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" id="sm-validated" class="h-4 w-4 text-[#6E473B]">
+          <span class="font-semibold">Cita de verificación (15 días antes) validada sin cambios en medidas</span>
+        </label>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('modal-sastre-measurements')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#6E473B] text-white font-bold">Guardar Medidas Exactas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Solicitar Telas a Inventario (Sastre Patronista) -->
+  <div id="modal-sastre-fabric" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 border border-[#BEB5A9] shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Solicitar Telas al Analista</h3>
+        <button onclick="closeModal('modal-sastre-fabric')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitFabricRequest(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="sf-ticket-id">
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Tela o Material *</label>
+          <select id="sf-code" required class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></select>
+        </div>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Cantidad Requerida *</label>
+          <input type="number" step="0.5" min="0.5" id="sf-qty" value="3.0" required class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Especificaciones para Almacén</label>
+          <input type="text" id="sf-notes" placeholder="Ej. Corte continuo de 3 metros sin empalmes" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('modal-sastre-fabric')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#6E473B] text-white font-bold">Enviar Solicitud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Cobrar Saldo y Facturar (Facturación) -->
+  <div id="modal-pay-invoice" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 border border-[#BEB5A9] shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Cobro Final y Facturación</h3>
+        <button onclick="closeModal('modal-pay-invoice')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitFinalPayment(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="pi-ticket-id">
+        <div id="pi-summary" class="p-4 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1"></div>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Monto a Liquidar ($) *</label>
+          <input type="number" step="0.01" id="pi-amount" required class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono font-bold text-base">
+        </div>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Método de Pago *</label>
+          <select id="pi-method" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta de Débito/Crédito">Tarjeta de Débito/Crédito</option>
+            <option value="Transferencia / Yappy">Transferencia / Yappy</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Notas de Entrega</label>
+          <input type="text" id="pi-notes" placeholder="Entregado en funda protectora" class="w-full px-3 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" onclick="closeModal('modal-pay-invoice')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#291C0E] text-white font-bold">Liquidar Saldo y Emitir Factura</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Recibo Imprimible -->
+  <div id="modal-invoice-receipt" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div id="printable-receipt-modal" class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-[#BEB5A9]">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/30 pb-3 no-print">
+        <h4 class="font-serif-luxury font-bold text-[#291C0E] text-lg">Comprobante Oficial</h4>
+        <button onclick="closeModal('modal-invoice-receipt')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="receipt-body" class="border border-[#BEB5A9] p-6 rounded-2xl space-y-3 text-xs font-mono bg-[#FAF7F2]/40"></div>
+      <div class="flex justify-end space-x-3 no-print">
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-[#291C0E] text-white text-xs font-bold">Imprimir</button>
+        <button onclick="closeModal('modal-invoice-receipt')" class="px-4 py-2 rounded-xl border border-[#BEB5A9] text-xs font-bold">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Crear/Editar Pieza Catálogo Web -->
+  <div id="modal-catalog-item" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 border border-[#BEB5A9] shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 id="cat-modal-title" class="font-serif-luxury text-xl font-bold text-[#291C0E]">Pieza de Colección</h3>
+        <button onclick="closeModal('modal-catalog-item')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitCatalogItem(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="ci-id">
+        <div><label class="block font-bold mb-1">Nombre *</label><input type="text" id="ci-name" required class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block font-bold mb-1">Categoría *</label><input type="text" id="ci-category" required placeholder="Trajes, Camisas..." class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+          <div><label class="block font-bold mb-1">Estilo *</label><input type="text" id="ci-style" required placeholder="Slim Fit" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+          <div><label class="block font-bold mb-1">Talla *</label><input type="text" id="ci-size" required placeholder="40R, M..." class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+          <div><label class="block font-bold mb-1">Color *</label><input type="text" id="ci-color" required placeholder="Azul Marino" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+          <div><label class="block font-bold mb-1">Precio ($) *</label><input type="number" step="0.01" id="ci-price" required class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+          <div><label class="block font-bold mb-1">Existencias *</label><input type="number" min="0" id="ci-stock" required class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] font-mono"></div>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Imagen</label>
+          <select id="ci-image" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+            <option value="/static/img/suit_grey.jpg">Traje Gris (/static/img/suit_grey.jpg)</option>
+            <option value="/static/img/suit_blue.jpg">Traje Azul (/static/img/suit_blue.jpg)</option>
+            <option value="/static/img/dress_emerald.jpg">Vestido Esmeralda (/static/img/dress_emerald.jpg)</option>
+            <option value="/static/img/shirt_linen.jpg">Guayabera Lino (/static/img/shirt_linen.jpg)</option>
+            <option value="/static/img/shirt_oxford.jpg">Camisa Oxford (/static/img/shirt_oxford.jpg)</option>
+            <option value="/static/img/pants_black.jpg">Pantalón Negro (/static/img/pants_black.jpg)</option>
+          </select>
+        </div>
+        <div><label class="block font-bold mb-1">Tejido y Composición</label><input type="text" id="ci-fabric" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+        <div><label class="block font-bold mb-1">Tiempo de Entrega</label><input type="text" id="ci-delivery" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+        <div><label class="block font-bold mb-1">Cuidados</label><input type="text" id="ci-care" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+        <div><label class="block font-bold mb-1">Descripción</label><textarea id="ci-description" rows="2" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></textarea></div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('modal-catalog-item')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#6E473B] text-white font-bold">Guardar Pieza</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Crear Trabajador (Admin) -->
+  <div id="modal-worker-form" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 border border-[#BEB5A9] shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Crear Nuevo Trabajador</h3>
+        <button onclick="closeModal('modal-worker-form')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="submitCreateWorker(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block font-bold mb-1">Usuario de Acceso *</label><input type="text" id="wf-username" required placeholder="Ej. mostrador2" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+          <div><label class="block font-bold mb-1">Contraseña *</label><input type="password" id="wf-password" required minlength="4" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block font-bold mb-1">Etiqueta de Rol *</label><input type="text" id="wf-role-label" required placeholder="Ej. Mostrador Turno Tarde" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]"></div>
+          <div>
+            <label class="block font-bold mb-1">Área / Tipo</label>
+            <select id="wf-role-type" class="w-full px-3 py-2 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2]">
+              <option value="mostrador">Mostrador / Caja</option>
+              <option value="sastre">Sastre Patronista</option>
+              <option value="inventario">Analista de Inventario</option>
+              <option value="calidad">Control de Calidad</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="block font-bold text-[#291C0E]">Vistas Permitidas para este Trabajador:</label>
+          <div id="wf-views-checkboxes" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('modal-worker-form')" class="px-4 py-2 rounded-xl border border-[#BEB5A9]">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#291C0E] text-white font-bold">Crear Trabajador</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Historial del Ticket -->
+  <div id="modal-ticket-history" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 border border-[#BEB5A9] shadow-2xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-[#BEB5A9]/40 pb-3">
+        <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Trazabilidad de Orden <span id="hist-ticket-id" class="font-mono"></span></h3>
+        <button onclick="closeModal('modal-ticket-history')" class="text-[#A78D78] hover:text-[#291C0E]"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="hist-entries" class="space-y-2.5 text-xs"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const s = document.createElement('script');
+      s.src = window.location.pathname.replace(/\/$/, '') + '/portal.js';
+      document.body.appendChild(s);
+    })();
+  </script>
+</body>
+</html>

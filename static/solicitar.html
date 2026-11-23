@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Otro Producto e Información — Sastrería All Look</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-[#FAF7F2] text-[#291C0E] antialiased selection:bg-[#E1D4C2] selection:text-[#291C0E]">
+
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <header class="sticky top-0 z-40 bg-white border-b border-[#BEB5A9]/50 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center space-x-3 group">
+        <div class="w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-[#BEB5A9]/50 bg-white shrink-0">
+          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <span class="font-serif-luxury text-2xl font-bold tracking-wide text-[#291C0E] block leading-none">All Look</span>
+          <span class="text-[11px] text-[#6E473B] uppercase tracking-widest font-bold">Alta Sastrería & Boutique</span>
+        </div>
+      </a>
+
+      <div class="flex items-center space-x-3">
+        <a href="/#piezas"
+           class="hidden sm:inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-[#BEB5A9] bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2] transition">
+          <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-[#6E473B]"></i>
+          <span>Ver Colección</span>
+        </a>
+        <div id="auth-nav-container"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div>
+      <a href="/#piezas" class="inline-flex items-center space-x-2 text-xs font-bold text-[#6E473B] hover:text-[#291C0E] transition">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Volver a la Colección de Piezas</span>
+      </a>
+    </div>
+
+    <div class="space-y-2">
+      <span class="px-3 py-1 rounded-full text-xs font-bold bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9] inline-block">
+        Atención de Sastrería
+      </span>
+      <h1 class="font-serif-luxury text-3xl sm:text-4xl font-bold text-[#291C0E]">
+        Solicitar Otro Producto, Confección o Información
+      </h1>
+      <p class="text-sm text-[#6E473B] max-w-2xl leading-relaxed">
+        Elija la subpestaña según lo que necesite. Todas las solicitudes llegan directamente a nuestro Mostrador / Caja para coordinar su atención con el Sastre Patronista.
+      </p>
+    </div>
+
+    <!-- SUBPESTAÑAS -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 rounded-2xl bg-white border border-[#BEB5A9] text-xs font-bold">
+      <button id="sol-tab-medida" onclick="switchSolicitarTab('medida')" class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2 bg-[#6E473B] text-white">
+        <i data-lucide="scissors" class="w-4 h-4"></i>
+        <span>Otro Producto / A la Medida</span>
+      </button>
+      <button id="sol-tab-arreglo" onclick="switchSolicitarTab('arreglo')" class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2 bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2]">
+        <i data-lucide="ruler" class="w-4 h-4"></i>
+        <span>Arreglo de Prenda</span>
+      </button>
+      <button id="sol-tab-reglas" onclick="switchSolicitarTab('reglas')" class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2 bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2]">
+        <i data-lucide="info" class="w-4 h-4"></i>
+        <span>Cómo Funciona y Reglas</span>
+      </button>
+    </div>
+
+    <!-- Banner de Confirmación -->
+    <div id="sol-success-banner" class="hidden p-6 rounded-2xl bg-white border-2 border-[#6E473B] space-y-2 shadow-sm">
+      <div class="flex items-center space-x-2 text-[#291C0E] font-bold text-base">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-[#6E473B]"></i>
+        <span>¡Solicitud Recibida por Mostrador / Caja!</span>
+      </div>
+      <p class="text-xs text-[#291C0E]">Número de solicitud asignado: <strong id="sol-success-code" class="font-mono text-sm"></strong></p>
+      <p id="sol-success-msg" class="text-xs text-[#6E473B] leading-relaxed"></p>
+    </div>
+
+    <!-- PANEL 1: OTRO PRODUCTO / CONFECCIÓN A LA MEDIDA -->
+    <section id="sol-panel-medida" class="bg-white rounded-3xl border border-[#BEB5A9] p-6 sm:p-10 space-y-6 shadow-sm">
+      <div class="border-b border-[#BEB5A9]/40 pb-4 space-y-1">
+        <h2 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Solicitar Producto Especial o Confección a la Medida</h2>
+        <p class="text-xs text-[#6E473B] leading-relaxed">
+          No necesita tomar sus propias medidas en casa: al confirmar su orden con el <strong>50% de anticipo</strong> en Mostrador, nuestro <strong>Sastre Patronista</strong> registrará cada medida anatómica exacta en su ficha.
+        </p>
+      </div>
+
+      <form id="form-solicitar-medida" onsubmit="submitSolicitarMedida(event)" class="space-y-5 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Nombre Completo *</label>
+            <input type="text" id="med-name" required placeholder="Ej. Roberto De La Espriella" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Teléfono / WhatsApp *</label>
+            <input type="tel" id="med-phone" required placeholder="+507 6234-8891" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Cédula o Pasaporte</label>
+            <input type="text" id="med-idcard" placeholder="8-123-456" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Tipo de Pieza Deseada *</label>
+            <select id="med-garment" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+              <option value="Traje Formal 2 Piezas a la Medida">Traje Formal 2 Piezas a la Medida</option>
+              <option value="Traje 3 Piezas con Chaleco">Traje 3 Piezas (Saco, Pantalón y Chaleco)</option>
+              <option value="Smoking / Tuxedo a la Medida">Smoking / Tuxedo de Gala</option>
+              <option value="Vestido de Noche / Cóctel a la Medida">Vestido de Noche / Cóctel a la Medida</option>
+              <option value="Uniforme Corporativo / Escolar">Uniforme Corporativo / Escolar</option>
+              <option value="Guayabera o Camisa a la Medida">Guayabera o Camisa a la Medida</option>
+              <option value="Otra Pieza Especial">Otra Pieza Especial (especificar en notas)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Ocasión / Evento *</label>
+            <input type="text" id="med-occasion" required placeholder="Ej. Boda, Graduación, Oficina, Gala" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Tela Preferida *</label>
+            <select id="med-fabric" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+              <option value="Asesoría en tienda con catálogo de telas">Deseo asesoría en tienda con el catálogo de telas</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Fecha Deseada de Entrega</label>
+            <input type="date" id="med-date" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Detalles del Estilo, Color o Referencia</label>
+          <textarea id="med-notes" rows="3" placeholder="Cuéntenos el color, corte, tipo de solapa o cualquier referencia adicional..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white"></textarea>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 text-[11px] text-[#6E473B] leading-relaxed">
+          Al confirmar el pedido en mostrador se requiere un <strong>anticipo mínimo del 50%</strong>. Le notificaremos <strong>15 días antes</strong> de la entrega para verificar que sus medidas no hayan cambiado.
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" class="px-7 py-3.5 rounded-xl bg-[#6E473B] hover:bg-[#291C0E] text-white font-bold text-sm transition flex items-center space-x-2">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Enviar Solicitud a Mostrador</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- PANEL 2: ARREGLO DE PRENDA PROPIA -->
+    <section id="sol-panel-arreglo" class="hidden bg-white rounded-3xl border border-[#BEB5A9] p-6 sm:p-10 space-y-6 shadow-sm">
+      <div class="border-b border-[#BEB5A9]/40 pb-4 space-y-1">
+        <h2 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Solicitar Arreglo o Ajuste sobre Prenda Propia</h2>
+        <p class="text-xs text-[#6E473B] leading-relaxed">
+          Registre el arreglo que necesita (acortar bastilla, entallar camisa o chaqueta, cambiar cierre) y pase por mostrador para evaluación y tiempo exacto de entrega.
+        </p>
+      </div>
+
+      <form id="form-solicitar-arreglo" onsubmit="submitSolicitarArreglo(event)" class="space-y-5 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Nombre Completo *</label>
+            <input type="text" id="alt-name" required placeholder="Ej. Ana Victoria Ramos" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Teléfono / WhatsApp *</label>
+            <input type="tel" id="alt-phone" required placeholder="+507 6555-1234" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Prenda que Trae *</label>
+            <input type="text" id="alt-garment" required placeholder="Ej. Pantalón de vestir azul marino" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+          <div>
+            <label class="block font-bold text-[#291C0E] mb-1">Fecha Deseada de Entrega</label>
+            <input type="date" id="alt-date" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#291C0E] mb-1">Descripción Exacta de la Modificación *</label>
+          <textarea id="alt-details" required rows="3" placeholder="Ej. Acortar 3 cm de basta con puntada invisible y entallar cintura 2 cm." class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white"></textarea>
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" class="px-7 py-3.5 rounded-xl bg-[#6E473B] hover:bg-[#291C0E] text-white font-bold text-sm transition flex items-center space-x-2">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Registrar Solicitud de Arreglo</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- PANEL 3: CÓMO FUNCIONA Y REGLAS DEL NEGOCIO -->
+    <section id="sol-panel-reglas" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl border border-[#BEB5A9] p-6 sm:p-10 space-y-6 shadow-sm">
+        <div class="space-y-1">
+          <h2 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Proceso de Atención en Sastrería All Look</h2>
+          <p class="text-xs text-[#6E473B]">Cada pieza sigue un estricto recorrido artesanal y de control de calidad:</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1.5">
+            <span class="font-mono font-bold text-[#6E473B]">01. RECEPCIÓN EN MOSTRADOR</span>
+            <p class="font-bold text-[#291C0E]">Toma de Pedido & Anticipo</p>
+            <p class="text-[#6E473B]">Mostrador / Caja formaliza su orden, fecha de entrega y anticipo mínimo del 50% en confección a la medida.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1.5">
+            <span class="font-mono font-bold text-[#6E473B]">02. SASTRE PATRONISTA</span>
+            <p class="font-bold text-[#291C0E]">Medidas Exactas & Corte</p>
+            <p class="text-[#6E473B]">El Sastre Patronista toma sus medidas anatómicas, solicita las telas exactas y arma la pieza artesanalmente.</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1.5">
+            <span class="font-mono font-bold text-[#6E473B]">03. CONTROL DE CALIDAD</span>
+            <p class="font-bold text-[#291C0E]">Inspección Rigurosa</p>
+            <p class="text-[#6E473B]">Ninguna prenda sale del taller sin revisión de costuras, medidas exactas y acabados limpios.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-[#BEB5A9] p-6 sm:p-10 space-y-4 shadow-sm">
+        <h3 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Reglas y Garantías de Servicio</h3>
+        <ul class="space-y-3 text-xs sm:text-sm text-[#291C0E] leading-relaxed">
+          <li class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/40">
+            <strong>1. Anticipo Obligatorio del 50%:</strong> Toda prenda confeccionada a la medida requiere un anticipo del 50% antes de iniciar el corte y la costura.
+          </li>
+          <li class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/40">
+            <strong>2. Cita de Verificación a 15 Días:</strong> Le citaremos 15 días antes de la fecha de entrega para comprobar que sus medidas no hayan cambiado. La sastrería no asume responsabilidad por cambios de peso posteriores, salvo causa médica.
+          </li>
+          <li class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/40">
+            <strong>3. Control de Calidad Obligatorio:</strong> Ninguna pieza es liberada al cliente sin aprobación previa de Control de Calidad.
+          </li>
+          <li class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/40">
+            <strong>4. Ajuste Correctivo Sin Costo Adicional:</strong> Si en la prueba final la prenda no calza perfectamente, nuestro mostrador la devuelve al Sastre Patronista para su corrección sin ningún costo extra para usted.
+          </li>
+          <li class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/40">
+            <strong>5. Liquidación Total Previa al Retiro:</strong> El pago del saldo pendiente es obligatorio al momento de retirar la pieza terminada con su comprobante oficial.
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#291C0E] text-[#E1D4C2] border-t border-[#422F1C] py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#BEB5A9]">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg overflow-hidden bg-white border border-[#422F1C]">
+          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
+        </div>
+        <span class="font-serif-luxury text-lg font-bold text-white">All Look</span>
+      </div>
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-white">Colección de Piezas</a>
+        <a href="/solicitar?tipo=medida" class="hover:text-white">A la Medida</a>
+        <a href="/solicitar?tipo=arreglo" class="hover:text-white">Arreglos</a>
+      </div>
+      <p>© 2026 Sastrería All Look.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL CUENTA CLIENTE -->
+  <div id="modal-customer-auth" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-[#BEB5A9] max-h-[92vh] overflow-y-auto">
+      <div class="flex items-start justify-between border-b border-[#BEB5A9]/40 pb-4">
+        <div>
+          <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9]">
+            <i data-lucide="user-check" class="w-3 h-3 text-[#6E473B]"></i>
+            <span>Cuenta de Cliente</span>
+          </span>
+          <h3 class="font-serif-luxury text-2xl font-bold text-[#291C0E] mt-1.5">Bienvenido a All Look</h3>
+        </div>
+        <button onclick="closeCustomerAuthModal()" class="text-[#A78D78] hover:text-[#291C0E] p-1.5 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 p-1 bg-[#FAF7F2] border border-[#BEB5A9] rounded-2xl text-xs font-bold">
+        <button id="auth-tab-btn-register" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl transition text-center bg-[#6E473B] text-white">Crear Cuenta</button>
+        <button id="auth-tab-btn-login" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl transition text-center text-[#291C0E] hover:bg-[#E1D4C2]">Iniciar Sesión</button>
+      </div>
+      <div id="auth-error-msg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold"></div>
+      <form id="auth-form-register" onsubmit="handleCustomerRegister(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Nombre Completo *</label>
+          <input type="text" id="reg-name" required placeholder="Ej. Andrea Morales" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Correo Electrónico *</label>
+          <input type="email" id="reg-email" required placeholder="correo@ejemplo.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Teléfono *</label>
+            <input type="tel" id="reg-phone" required placeholder="6789-0123" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Cédula</label>
+            <input type="text" id="reg-idcard" placeholder="8-888-8888" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Contraseña *</label>
+          <input type="password" id="reg-password" required minlength="4" placeholder="Mínimo 4 caracteres" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <button type="submit" class="w-full py-3 bg-[#6E473B] hover:bg-[#291C0E] text-white rounded-xl font-bold transition">Registrarme y Crear Cuenta</button>
+      </form>
+      <form id="auth-form-login" onsubmit="handleCustomerLogin(event)" class="space-y-3.5 text-xs hidden">
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Correo Electrónico *</label>
+          <input type="email" id="log-email" required placeholder="correo@ejemplo.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Contraseña *</label>
+          <input type="password" id="log-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <button type="submit" class="w-full py-3 bg-[#6E473B] hover:bg-[#291C0E] text-white rounded-xl font-bold transition">Iniciar Sesión</button>
+      </form>
+      <div class="border-t border-[#BEB5A9]/40 pt-3">
+        <button onclick="closeCustomerAuthModal()" class="w-full py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] hover:bg-[#E1D4C2] text-[#291C0E] font-bold text-xs transition">Continuar sin cuenta (Modo Invitado)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/cliente.js"></script>
+</body>
+</html>

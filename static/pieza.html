@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desglose de Pieza — Sastrería All Look</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-[#FAF7F2] text-[#291C0E] antialiased selection:bg-[#E1D4C2] selection:text-[#291C0E]">
+
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <header class="sticky top-0 z-40 bg-white border-b border-[#BEB5A9]/50 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center space-x-3 group">
+        <div class="w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-[#BEB5A9]/50 bg-white shrink-0">
+          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
+        </div>
+        <div>
+          <span class="font-serif-luxury text-2xl font-bold tracking-wide text-[#291C0E] block leading-none">All Look</span>
+          <span class="text-[11px] text-[#6E473B] uppercase tracking-widest font-bold">Alta Sastrería & Boutique</span>
+        </div>
+      </a>
+
+      <div class="flex items-center space-x-3">
+        <a href="/solicitar"
+           class="hidden sm:inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-[#6E473B] text-[#6E473B] hover:bg-[#6E473B] hover:text-white transition">
+          <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
+          <span>Solicitar Otra Pieza</span>
+        </a>
+        <div id="auth-nav-container"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+    <!-- Breadcrumb -->
+    <div>
+      <a href="/#piezas" class="inline-flex items-center space-x-2 text-xs font-bold text-[#6E473B] hover:text-[#291C0E] transition">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Volver a la Colección de Piezas</span>
+      </a>
+    </div>
+
+    <!-- Contenedor principal del desglose -->
+    <div id="piece-detail-loading" class="p-16 text-center text-sm text-[#A78D78]">
+      Cargando desglose detallado de la pieza...
+    </div>
+
+    <div id="piece-detail-error" class="hidden p-12 rounded-3xl bg-white border border-[#BEB5A9] text-center space-y-4">
+      <h2 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Pieza no encontrada</h2>
+      <p class="text-sm text-[#6E473B]">La prenda solicitada no está disponible o fue retirada de exhibición.</p>
+      <a href="/" class="inline-block px-6 py-3 rounded-xl bg-[#6E473B] text-white text-xs font-bold">Ir al Catálogo</a>
+    </div>
+
+    <div id="piece-detail-content" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      <!-- Columna Imagen -->
+      <div class="lg:col-span-6 space-y-4">
+        <div class="rounded-3xl bg-white border border-[#BEB5A9] p-3 shadow-lg">
+          <div class="h-[480px] sm:h-[560px] rounded-2xl overflow-hidden bg-[#FAF7F2]">
+            <img id="pd-image" src="" alt="" class="w-full h-full object-cover object-top">
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Desglose y Solicitud -->
+      <div class="lg:col-span-6 space-y-6">
+        <div class="bg-white rounded-3xl border border-[#BEB5A9] p-6 sm:p-8 space-y-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span id="pd-category" class="px-3 py-1 rounded-full text-xs font-bold bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9]"></span>
+            <span id="pd-stock-badge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
+          </div>
+
+          <div class="space-y-2">
+            <h1 id="pd-name" class="font-serif-luxury text-3xl sm:text-4xl font-bold text-[#291C0E] leading-tight"></h1>
+            <p id="pd-description" class="text-sm text-[#6E473B] leading-relaxed"></p>
+          </div>
+
+          <div class="flex items-baseline justify-between border-y border-[#BEB5A9]/40 py-4">
+            <div>
+              <span class="text-xs text-[#A78D78] font-bold uppercase block">Precio de Pieza</span>
+              <span id="pd-price" class="text-3xl font-black text-[#291C0E] font-mono"></span>
+            </div>
+            <span class="text-xs text-[#6E473B] font-semibold">Incluye revisión de Control de Calidad</span>
+          </div>
+
+          <!-- Desglose Técnico -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#A78D78]">Desglose de la Prenda</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
+                <span class="text-[#A78D78] font-bold block">Talla Exhibida</span>
+                <strong id="pd-size" class="text-[#291C0E] text-sm"></strong>
+              </div>
+              <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
+                <span class="text-[#A78D78] font-bold block">Color</span>
+                <strong id="pd-color" class="text-[#291C0E] text-sm"></strong>
+              </div>
+              <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
+                <span class="text-[#A78D78] font-bold block">Corte / Estilo</span>
+                <strong id="pd-style" class="text-[#291C0E] text-sm"></strong>
+              </div>
+              <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
+                <span class="text-[#A78D78] font-bold block">Tiempo de Entrega</span>
+                <strong id="pd-delivery" class="text-[#291C0E] text-xs"></strong>
+              </div>
+              <div class="sm:col-span-2 p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
+                <span class="text-[#A78D78] font-bold block">Tejido & Composición</span>
+                <strong id="pd-fabric" class="text-[#291C0E] text-xs leading-relaxed"></strong>
+              </div>
+              <div class="sm:col-span-2 p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
+                <span class="text-[#A78D78] font-bold block">Cuidados Recomendados</span>
+                <p id="pd-care" class="text-[#6E473B] text-xs mt-0.5 leading-relaxed"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulario directo de solicitud -->
+          <div id="pd-request-success" class="hidden p-5 rounded-2xl bg-[#E1D4C2]/50 border border-[#6E473B] space-y-2 text-xs">
+            <div class="flex items-center space-x-2 text-[#291C0E] font-bold text-sm">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-[#6E473B]"></i>
+              <span>¡Solicitud Enviada al Mostrador!</span>
+            </div>
+            <p class="text-[#291C0E]">Código de solicitud: <strong id="pd-success-code" class="font-mono"></strong></p>
+            <p id="pd-success-msg" class="text-[#6E473B] leading-relaxed"></p>
+          </div>
+
+          <form id="piece-request-form" onsubmit="submitPieceRequest(event)" class="space-y-4 pt-2 border-t border-[#BEB5A9]/40 text-xs">
+            <h3 class="font-serif-luxury text-xl font-bold text-[#291C0E]">Solicitar esta Pieza</h3>
+            <p class="text-[#6E473B]">Su solicitud llega directo a <strong>Mostrador / Caja</strong> para apartar la prenda y coordinar su prueba o retiro.</p>
+
+            <input type="hidden" id="piece-req-item-id">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-[#291C0E] mb-1">Nombre Completo *</label>
+                <input type="text" id="piece-req-name" required placeholder="Ej. Gabriel Alemán" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-[#291C0E] mb-1">Teléfono / WhatsApp *</label>
+                <input type="tel" id="piece-req-phone" required placeholder="+507 6123-4567" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-[#291C0E] mb-1">Cédula / Pasaporte</label>
+                <input type="text" id="piece-req-idcard" placeholder="8-456-789" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+              </div>
+              <div>
+                <label class="block font-bold text-[#291C0E] mb-1">Fecha Deseada de Prueba / Retiro</label>
+                <input type="date" id="piece-req-date" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+              </div>
+            </div>
+
+            <label class="flex items-center space-x-2.5 p-3 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/60 cursor-pointer">
+              <input type="checkbox" id="piece-req-adjust" class="h-4 w-4 rounded text-[#6E473B]">
+              <span class="font-semibold text-[#291C0E]">Deseo ajuste menor en probador (basta, entalle o mangas)</span>
+            </label>
+
+            <div>
+              <label class="block font-bold text-[#291C0E] mb-1">Notas adicionales</label>
+              <textarea id="piece-req-notes" rows="2" placeholder="Indique horario preferido o detalles del ajuste deseado..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white"></textarea>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-1">
+              <button type="submit" id="piece-req-submit" class="flex-1 py-3.5 px-6 rounded-xl bg-[#6E473B] hover:bg-[#291C0E] text-white font-bold text-sm transition flex items-center justify-center space-x-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span>Enviar Solicitud a Mostrador</span>
+              </button>
+              <a id="piece-bespoke-link" href="/solicitar?tipo=medida" class="py-3.5 px-5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] hover:bg-[#E1D4C2] text-[#291C0E] font-bold text-xs text-center flex items-center justify-center">
+                Pedir en Otra Talla / A Medida
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Piezas Relacionadas -->
+    <section id="related-section" class="hidden space-y-6 pt-6 border-t border-[#BEB5A9]/40">
+      <div class="flex items-center justify-between">
+        <h2 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Otras Piezas de la Colección</h2>
+        <a href="/#piezas" class="text-xs font-bold text-[#6E473B] hover:underline">Ver todas</a>
+      </div>
+      <div id="related-catalog-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-6"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#291C0E] text-[#E1D4C2] border-t border-[#422F1C] py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#BEB5A9]">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg overflow-hidden bg-white border border-[#422F1C]">
+          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
+        </div>
+        <span class="font-serif-luxury text-lg font-bold text-white">All Look</span>
+      </div>
+      <div class="flex items-center space-x-5">
+        <a href="/" class="hover:text-white">Colección</a>
+        <a href="/solicitar?tipo=medida" class="hover:text-white">Solicitar a Medida</a>
+        <a href="/solicitar?tipo=reglas" class="hover:text-white">Reglas y Garantías</a>
+      </div>
+      <p>© 2026 Sastrería All Look.</p>
+    </div>
+  </footer>
+
+  <!-- MODAL CUENTA CLIENTE -->
+  <div id="modal-customer-auth" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-[#BEB5A9] max-h-[92vh] overflow-y-auto">
+      <div class="flex items-start justify-between border-b border-[#BEB5A9]/40 pb-4">
+        <div>
+          <span class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9]">
+            <i data-lucide="user-check" class="w-3 h-3 text-[#6E473B]"></i>
+            <span>Cuenta de Cliente</span>
+          </span>
+          <h3 class="font-serif-luxury text-2xl font-bold text-[#291C0E] mt-1.5">Bienvenido a All Look</h3>
+        </div>
+        <button onclick="closeCustomerAuthModal()" class="text-[#A78D78] hover:text-[#291C0E] p-1.5 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 p-1 bg-[#FAF7F2] border border-[#BEB5A9] rounded-2xl text-xs font-bold">
+        <button id="auth-tab-btn-register" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl transition text-center bg-[#6E473B] text-white">Crear Cuenta</button>
+        <button id="auth-tab-btn-login" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl transition text-center text-[#291C0E] hover:bg-[#E1D4C2]">Iniciar Sesión</button>
+      </div>
+      <div id="auth-error-msg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold"></div>
+      <form id="auth-form-register" onsubmit="handleCustomerRegister(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Nombre Completo *</label>
+          <input type="text" id="reg-name" required placeholder="Ej. Andrea Morales" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Correo Electrónico *</label>
+          <input type="email" id="reg-email" required placeholder="correo@ejemplo.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Teléfono *</label>
+            <input type="tel" id="reg-phone" required placeholder="6789-0123" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Cédula</label>
+            <input type="text" id="reg-idcard" placeholder="8-888-8888" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Contraseña *</label>
+          <input type="password" id="reg-password" required minlength="4" placeholder="Mínimo 4 caracteres" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <button type="submit" class="w-full py-3 bg-[#6E473B] hover:bg-[#291C0E] text-white rounded-xl font-bold transition">Registrarme y Crear Cuenta</button>
+      </form>
+      <form id="auth-form-login" onsubmit="handleCustomerLogin(event)" class="space-y-3.5 text-xs hidden">
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Correo Electrónico *</label>
+          <input type="email" id="log-email" required placeholder="correo@ejemplo.com" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-[#291C0E] mb-1">Contraseña *</label>
+          <input type="password" id="log-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] focus:bg-white">
+        </div>
+        <button type="submit" class="w-full py-3 bg-[#6E473B] hover:bg-[#291C0E] text-white rounded-xl font-bold transition">Iniciar Sesión</button>
+      </form>
+      <div class="border-t border-[#BEB5A9]/40 pt-3">
+        <button onclick="closeCustomerAuthModal()" class="w-full py-2.5 rounded-xl border border-[#BEB5A9] bg-[#FAF7F2] hover:bg-[#E1D4C2] text-[#291C0E] font-bold text-xs transition">Continuar sin cuenta (Modo Invitado)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/cliente.js"></script>
+</body>
+</html>

@@ -11,6 +11,11 @@ services:
     environment:
       - PORT=8090
       - DATABASE_PATH=/app/data/alllook.db
+      - STAFF_SECRET_PATH=${STAFF_SECRET_PATH:-atelier-privado-9x4k2m}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-AllLookAdmin2026!}
+      - STAFF_DEFAULT_PASSWORD=${STAFF_DEFAULT_PASSWORD:-TallerAllLook2026!}
+      - SESSION_SECRET=${SESSION_SECRET:-}
+      - ENABLE_DOCS=${ENABLE_DOCS:-false}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
       interval: 15s

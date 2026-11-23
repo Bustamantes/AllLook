@@ -4,7 +4,6 @@
 
 const CUSTOMER_STORAGE_KEY = 'alllook_customer_user';
 
-// Obtener cliente activo o null
 function getCurrentCustomer() {
   try {
     const raw = localStorage.getItem(CUSTOMER_STORAGE_KEY);
@@ -14,7 +13,6 @@ function getCurrentCustomer() {
   }
 }
 
-// Guardar cliente
 function setCurrentCustomer(cust) {
   if (cust) {
     localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(cust));
@@ -25,31 +23,27 @@ function setCurrentCustomer(cust) {
   applyCustomerDataToForms(cust);
 }
 
-// Cerrar sesión
 function logoutCustomer() {
   localStorage.removeItem(CUSTOMER_STORAGE_KEY);
   renderCustomerAuthNav();
-  alert('Ha cerrado sesión exitosamente.');
 }
 
-// Renderizar botones en la barra de navegación del cliente
 function renderCustomerAuthNav() {
   const container = document.getElementById('auth-nav-container');
   if (!container) return;
 
   const cust = getCurrentCustomer();
-
   if (cust) {
     container.innerHTML = `
-      <div class="inline-flex items-center space-x-2.5 bg-white border border-[#BEB5A9] px-3.5 py-1.5 rounded-xl text-xs shadow-xs">
-        <span class="w-7 h-7 rounded-lg bg-[#6E473B] text-white font-bold flex items-center justify-center text-[11px] font-mono shadow-inner">
+      <div class="inline-flex items-center space-x-2.5 bg-[#FAF7F2] border border-[#BEB5A9] px-3 py-1.5 rounded-xl text-xs">
+        <span class="w-7 h-7 rounded-lg bg-[#6E473B] text-white font-bold flex items-center justify-center text-[11px] font-mono">
           ${cust.initials || 'CL'}
         </span>
         <div class="text-left hidden sm:block">
           <p class="font-bold text-[#291C0E] text-xs leading-tight">${cust.name}</p>
-          <span class="text-[10px] text-[#6E473B] font-semibold">${cust.role_name || 'Cliente Registrado'}</span>
+          <span class="text-[10px] text-[#6E473B] font-semibold">Cliente Registrado</span>
         </div>
-        <button onclick="logoutCustomer()" class="p-1 text-[#A78D78] hover:text-rose-600 transition" title="Cerrar sesión">
+        <button onclick="logoutCustomer()" class="p-1 text-[#A78D78] hover:text-rose-700 transition" title="Cerrar sesión">
           <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
       </div>
@@ -58,26 +52,26 @@ function renderCustomerAuthNav() {
     container.innerHTML = `
       <div class="flex items-center space-x-2">
         <button onclick="openCustomerAuthModal('register')"
-                class="px-4 py-2 rounded-xl text-xs font-bold bg-[#6E473B] hover:bg-[#291C0E] text-white shadow-sm hover:shadow transition">
+                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#6E473B] hover:bg-[#291C0E] text-white transition">
           Crear Cuenta
         </button>
         <button onclick="openCustomerAuthModal('login')"
-                class="px-3.5 py-2 rounded-xl text-xs font-bold border border-[#BEB5A9] bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2] transition shadow-xs">
+                class="px-3.5 py-2 rounded-xl text-xs font-bold border border-[#BEB5A9] bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2] transition">
           Iniciar Sesión
         </button>
       </div>
     `;
   }
-
   if (window.lucide) lucide.createIcons();
 }
 
-// Modal de autenticación del cliente
 function openCustomerAuthModal(initialTab = 'register') {
   const modal = document.getElementById('modal-customer-auth');
   if (!modal) return;
   modal.classList.remove('hidden');
   switchAuthTab(initialTab);
+  const errBox = document.getElementById('auth-error-msg');
+  if (errBox) errBox.classList.add('hidden');
   if (window.lucide) lucide.createIcons();
 }
 
@@ -86,12 +80,13 @@ function closeCustomerAuthModal() {
   if (modal) modal.classList.add('hidden');
 }
 
-// Alternar entre pestaña "Crear Cuenta" e "Iniciar Sesión"
 function switchAuthTab(tab) {
   const tabReg = document.getElementById('auth-tab-btn-register');
   const tabLog = document.getElementById('auth-tab-btn-login');
   const formReg = document.getElementById('auth-form-register');
   const formLog = document.getElementById('auth-form-login');
+  const errBox = document.getElementById('auth-error-msg');
+  if (errBox) errBox.classList.add('hidden');
 
   if (tab === 'register') {
     tabReg.classList.add('bg-[#6E473B]', 'text-white');
@@ -110,7 +105,14 @@ function switchAuthTab(tab) {
   }
 }
 
-// Manejar registro normal de cliente
+function _showAuthError(msg) {
+  const errBox = document.getElementById('auth-error-msg');
+  if (errBox) {
+    errBox.textContent = msg;
+    errBox.classList.remove('hidden');
+  }
+}
+
 async function handleCustomerRegister(e) {
   e.preventDefault();
   const name = document.getElementById('reg-name').value.trim();
@@ -120,7 +122,7 @@ async function handleCustomerRegister(e) {
   const password = document.getElementById('reg-password').value;
 
   if (password.length < 4) {
-    alert('La contraseña debe tener al menos 4 caracteres.');
+    _showAuthError('La contraseña debe tener al menos 4 caracteres.');
     return;
   }
 
@@ -130,23 +132,18 @@ async function handleCustomerRegister(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, phone, id_card, password })
     });
-
     const data = await res.json();
     if (!res.ok) {
-      alert(`Error en el registro: ${data.detail}`);
+      _showAuthError(data.detail || 'No se pudo completar el registro.');
       return;
     }
-
     setCurrentCustomer(data.user);
     closeCustomerAuthModal();
-    alert(`¡Cuenta creada con éxito!\nBienvenido(a), ${data.user.name}.`);
   } catch (err) {
-    console.error('Error registrando cliente:', err);
-    alert('Hubo un error al comunicarse con el servidor.');
+    _showAuthError('Error de conexión con el servidor.');
   }
 }
 
-// Manejar login normal de cliente
 async function handleCustomerLogin(e) {
   e.preventDefault();
   const email = document.getElementById('log-email').value.trim();
@@ -158,61 +155,38 @@ async function handleCustomerLogin(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-
     const data = await res.json();
     if (!res.ok) {
-      alert(`Error al iniciar sesión: ${data.detail}`);
+      _showAuthError(data.detail || 'Correo o contraseña incorrectos.');
       return;
     }
-
     setCurrentCustomer(data.user);
     closeCustomerAuthModal();
-    alert(`¡Sesión iniciada con éxito!\nBienvenido(a), ${data.user.name}.`);
   } catch (err) {
-    console.error('Error iniciando sesión:', err);
-    alert('Hubo un error al comunicarse con el servidor.');
+    _showAuthError('Error de conexión con el servidor.');
   }
 }
 
-// Autocompletar formularios con los datos del cliente
 function applyCustomerDataToForms(cust) {
   if (!cust) return;
-
-  // Formulario a la medida
-  const bName = document.getElementById('bespoke-name');
-  const bPhone = document.getElementById('bespoke-phone');
-  const bId = document.getElementById('bespoke-id');
-  if (bName) bName.value = cust.name;
-  if (bPhone && cust.phone) bPhone.value = cust.phone;
-  if (bId && cust.id_card) bId.value = cust.id_card;
-
-  // Formulario de compra
-  const cName = document.getElementById('cb-customer-name');
-  const cPhone = document.getElementById('cb-customer-phone');
-  const cId = document.getElementById('cb-customer-id');
-  if (cName) cName.value = cust.name;
-  if (cPhone && cust.phone) cPhone.value = cust.phone;
-  if (cId && cust.id_card) cId.value = cust.id_card;
-
-  // Formulario de alquiler
-  const rName = document.getElementById('cr-name');
-  const rPhone = document.getElementById('cr-phone');
-  const rId = document.getElementById('cr-id');
-  if (rName) rName.value = cust.name;
-  if (rPhone && cust.phone) rPhone.value = cust.phone;
-  if (rId && cust.id_card) rId.value = cust.id_card;
-
-  // Formulario de rastreo
-  const trackInp = document.getElementById('public-track-input');
-  if (trackInp && cust.phone) {
-    trackInp.value = cust.phone;
-    if (window.searchOrderTracking) {
-      window.searchOrderTracking();
+  const mappings = [
+    ['piece-req-name', cust.name],
+    ['piece-req-phone', cust.phone],
+    ['piece-req-idcard', cust.id_card],
+    ['med-name', cust.name],
+    ['med-phone', cust.phone],
+    ['med-idcard', cust.id_card],
+    ['alt-name', cust.name],
+    ['alt-phone', cust.phone],
+  ];
+  mappings.forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el && val && !el.value) {
+      el.value = val;
     }
-  }
+  });
 }
 
-// Iniciar al cargar
 document.addEventListener('DOMContentLoaded', () => {
   renderCustomerAuthNav();
   const activeCust = getCurrentCustomer();

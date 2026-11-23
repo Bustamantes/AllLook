@@ -1,13 +1,15 @@
-import sqlite3
 import os
+import sqlite3
 from contextlib import contextmanager
 
 DB_PATH = os.getenv("DATABASE_PATH", "/app/data/alllook.db")
+
 
 def ensure_db_dir():
     dirname = os.path.dirname(DB_PATH)
     if dirname and not os.path.exists(dirname):
         os.makedirs(dirname, exist_ok=True)
+
 
 @contextmanager
 def get_db():
@@ -23,12 +25,118 @@ def get_db():
     finally:
         conn.close()
 
+
+def _migrate_catalog_ready(cursor):
+    """Agrega columnas extendidas para el desglose y reemplaza imágenes externas por locales."""
+    cursor.execute("PRAGMA table_info(catalog_ready)")
+    cols = {row[1] for row in cursor.fetchall()}
+
+    if "fabric" not in cols:
+        cursor.execute("ALTER TABLE catalog_ready ADD COLUMN fabric TEXT DEFAULT 'Tejido de alta sastrería'")
+    if "delivery_time" not in cols:
+        cursor.execute("ALTER TABLE catalog_ready ADD COLUMN delivery_time TEXT DEFAULT 'Entrega inmediata o 24-48h con ajuste express'")
+    if "care_instructions" not in cols:
+        cursor.execute("ALTER TABLE catalog_ready ADD COLUMN care_instructions TEXT DEFAULT 'Lavado en seco especializado. Planchado al vapor con paño protector.'")
+
+    # Mapear imágenes locales confiables en caso de existir URLs externas en DB previa
+    local_map = [
+        ("%Gris%", "/static/img/suit_grey.jpg", "Lana fría italiana Super 120s con forro de acetato respirable", "Entrega inmediata (24h si solicita ajuste express)", "Lavado en seco profesional. Guardar en funda respirable con horma de madera."),
+        ("%Azul Real%", "/static/img/suit_blue.jpg", "Lana virgen peinada 2 cabos con caída natural", "Entrega inmediata (24h si solicita ajuste express)", "Lavado en seco especializado. Vaporizar suavemente antes de usar."),
+        ("%Vestido%", "/static/img/dress_emerald.jpg", "Satén italiano estructurado con forro interior suave", "Entrega inmediata (24-48h con ajuste de bastilla o entalle)", "Limpieza en tintorería delicada. No retorcer ni exponer a plancha directa."),
+        ("%Guayabera%", "/static/img/shirt_linen.jpg", "100% lino suizo puro de fibra larga", "Entrega inmediata (24h con ajuste de mangas)", "Lavado suave con agua fría o lavado en seco. Planchar ligeramente húmeda."),
+        ("%Oxford%", "/static/img/shirt_oxford.jpg", "100% algodón egipcio mercerizado doble cabo", "Entrega inmediata (24h con entalle de costados)", "Lavado delicado máximo 30°C. Planchado en cuello y puños sin vapor excesivo."),
+        ("%Pantalón%", "/static/img/pants_black.jpg", "Lana fría con mezcla técnica antiarrugas", "Entrega inmediata (24h para ajuste de bastilla)", "Lavado en seco o programa delicado. Preservar raya con prensado ligero."),
+    ]
+    for pattern, img_path, fabric, delivery_time, care in local_map:
+        cursor.execute(
+            """
+            UPDATE catalog_ready
+            SET image_url = CASE
+                    WHEN image_url IS NULL OR image_url = '' OR image_url LIKE 'http%' THEN ?
+                    ELSE image_url
+                END,
+                fabric = CASE WHEN fabric IS NULL OR fabric = '' OR fabric = 'Tejido de alta sastrería' THEN ? ELSE fabric END,
+                delivery_time = CASE WHEN delivery_time IS NULL OR delivery_time = '' OR delivery_time LIKE 'Entrega inmediata o%' THEN ? ELSE delivery_time END,
+                care_instructions = CASE WHEN care_instructions IS NULL OR care_instructions = '' OR care_instructions LIKE 'Lavado en seco especializado.%' THEN ? ELSE care_instructions END
+            WHERE name LIKE ?
+            """,
+            (img_path, fabric, delivery_time, care, pattern),
+        )
+
+
 def init_db():
     ensure_db_dir()
     with get_db() as conn:
         cursor = conn.cursor()
 
-        # Tabla de Inventario de Telas e Insumos (Regla del 30% de reorden)
+        # 1. Cuentas de Trabajadores (Solo Roles, Controladas por el Administrador General)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS staff_users (
+            id TEXT PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            role_label TEXT NOT NULL,
+            role_type TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
+            allowed_views_json TEXT NOT NULL,
+            is_active INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL
+        );
+        """)
+
+        # 2. Tabla Unificada de Tickets Operativos (Flujo de 6 Pasos de la Sastrería)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS workshop_tickets (
+            id TEXT PRIMARY KEY,
+            source TEXT NOT NULL,
+            order_type TEXT NOT NULL,
+            catalog_item_id INTEGER,
+            customer_name TEXT NOT NULL,
+            customer_phone TEXT NOT NULL,
+            customer_id_card TEXT DEFAULT '',
+            garment_description TEXT NOT NULL,
+            occasion TEXT DEFAULT '',
+            fabric_preference TEXT DEFAULT '',
+            measurements_json TEXT DEFAULT '{}',
+            tailor_notes TEXT DEFAULT '',
+            total_price REAL NOT NULL DEFAULT 0.0,
+            advance_payment REAL NOT NULL DEFAULT 0.0,
+            remaining_balance REAL NOT NULL DEFAULT 0.0,
+            order_date TEXT NOT NULL,
+            delivery_date TEXT DEFAULT '',
+            interim_fitting_date TEXT DEFAULT '',
+            interim_fitting_validated INTEGER DEFAULT 0,
+            weight_clause_accepted INTEGER DEFAULT 1,
+            stage TEXT NOT NULL,
+            qc_status TEXT DEFAULT 'Pendiente',
+            qc_notes TEXT DEFAULT '',
+            completed_date TEXT,
+            customer_contacted_at TEXT,
+            adjustment_count INTEGER DEFAULT 0,
+            adjustment_notes TEXT DEFAULT '',
+            created_by_role TEXT DEFAULT 'Mostrador / Caja',
+            history_json TEXT DEFAULT '[]'
+        );
+        """)
+
+        # 3. Solicitudes de Telas (Sastre Patronista -> Analista de Inventario)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS fabric_requests (
+            id TEXT PRIMARY KEY,
+            ticket_id TEXT NOT NULL,
+            inventory_code TEXT NOT NULL,
+            item_name TEXT NOT NULL,
+            quantity_requested REAL NOT NULL,
+            unit TEXT NOT NULL,
+            requested_by_role TEXT DEFAULT 'Sastre Patronista',
+            notes TEXT DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'Pendiente',
+            created_at TEXT NOT NULL,
+            resolved_at TEXT,
+            resolved_by_role TEXT
+        );
+        """)
+
+        # 4. Inventario de Telas e Insumos (Regla del 30% de Reorden)
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS inventory (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,7 +153,22 @@ def init_db():
         );
         """)
 
-        # Tabla de Catálogo de Exhibición (Venta al Detal)
+        # 5. Órdenes de Reabastecimiento a Proveedores (Regla 30%)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS purchase_orders (
+            id TEXT PRIMARY KEY,
+            item_code TEXT NOT NULL,
+            item_name TEXT NOT NULL,
+            supplier TEXT NOT NULL,
+            quantity REAL NOT NULL,
+            unit TEXT NOT NULL,
+            estimated_cost REAL NOT NULL,
+            date_ordered TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'En Camino'
+        );
+        """)
+
+        # 6. Catálogo de Piezas Exhibidas en la Web Pública
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS catalog_ready (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,105 +180,15 @@ def init_db():
             price REAL NOT NULL,
             stock INTEGER NOT NULL,
             description TEXT,
-            image_url TEXT
+            image_url TEXT,
+            fabric TEXT DEFAULT '',
+            delivery_time TEXT DEFAULT '',
+            care_instructions TEXT DEFAULT ''
         );
         """)
+        _migrate_catalog_ready(cursor)
 
-        # Tabla de Catálogo de Alquiler de Trajes y Vestidos
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS catalog_rental (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            code TEXT UNIQUE,
-            name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            size TEXT NOT NULL,
-            color TEXT NOT NULL,
-            rental_price REAL NOT NULL,
-            security_deposit REAL NOT NULL,
-            status TEXT DEFAULT 'Disponible',
-            description TEXT,
-            image_url TEXT
-        );
-        """)
-
-        # Tabla de Confección a la Medida
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS custom_orders (
-            id TEXT PRIMARY KEY,
-            customer_name TEXT NOT NULL,
-            customer_phone TEXT NOT NULL,
-            customer_id_card TEXT NOT NULL,
-            garment_type TEXT NOT NULL,
-            occasion TEXT NOT NULL,
-            fabric_selected TEXT NOT NULL,
-            measurements_json TEXT NOT NULL,
-            total_price REAL NOT NULL,
-            advance_payment REAL NOT NULL,
-            remaining_balance REAL NOT NULL,
-            order_date TEXT NOT NULL,
-            delivery_date TEXT NOT NULL,
-            interim_fitting_date TEXT NOT NULL,
-            interim_fitting_status TEXT DEFAULT 'Pendiente',
-            weight_clause_acknowledged INTEGER DEFAULT 1,
-            stage TEXT NOT NULL DEFAULT 'Toma de Medidas y Anticipo',
-            assigned_tailor TEXT,
-            qc_status TEXT DEFAULT 'Pendiente',
-            qc_notes TEXT,
-            final_fitting_result TEXT DEFAULT 'Pendiente',
-            completed_date TEXT,
-            days_waiting INTEGER DEFAULT 0,
-            status TEXT NOT NULL DEFAULT 'En Proceso',
-            notes TEXT
-        );
-        """)
-
-        # Tabla de Arreglos y Ajustes
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS alterations (
-            id TEXT PRIMARY KEY,
-            customer_name TEXT NOT NULL,
-            customer_phone TEXT NOT NULL,
-            garment_description TEXT NOT NULL,
-            alteration_details TEXT NOT NULL,
-            price REAL NOT NULL,
-            order_date TEXT NOT NULL,
-            estimated_delivery TEXT NOT NULL,
-            stage TEXT NOT NULL DEFAULT 'Recepción',
-            assigned_technician TEXT,
-            qc_status TEXT DEFAULT 'Pendiente',
-            qc_notes TEXT,
-            paid INTEGER DEFAULT 0,
-            status TEXT NOT NULL DEFAULT 'En Taller',
-            notes TEXT
-        );
-        """)
-
-        # Tabla de Alquileres de Prendas
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS rentals (
-            id TEXT PRIMARY KEY,
-            rental_item_id INTEGER NOT NULL,
-            garment_name TEXT NOT NULL,
-            customer_name TEXT NOT NULL,
-            customer_phone TEXT NOT NULL,
-            customer_id_card TEXT NOT NULL,
-            event_date TEXT NOT NULL,
-            pickup_date TEXT NOT NULL,
-            return_due_date TEXT NOT NULL,
-            actual_return_date TEXT,
-            rental_fee REAL NOT NULL,
-            security_deposit REAL NOT NULL,
-            deposit_refunded REAL DEFAULT 0,
-            damage_fee REAL DEFAULT 0,
-            fitting_adjustments TEXT,
-            status TEXT NOT NULL DEFAULT 'Reservado',
-            inspection_status TEXT DEFAULT 'Pendiente',
-            inspection_notes TEXT,
-            FOREIGN KEY (rental_item_id) REFERENCES catalog_rental(id)
-        );
-        """)
-
-        # Tabla de Facturación y Comprobantes
+        # 7. Facturación y Comprobantes
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS invoices (
             id TEXT PRIMARY KEY,
@@ -176,22 +209,7 @@ def init_db():
         );
         """)
 
-        # Tabla de Órdenes de Reabastecimiento a Proveedores
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS purchase_orders (
-            id TEXT PRIMARY KEY,
-            item_code TEXT NOT NULL,
-            item_name TEXT NOT NULL,
-            supplier TEXT NOT NULL,
-            quantity REAL NOT NULL,
-            unit TEXT NOT NULL,
-            estimated_cost REAL NOT NULL,
-            date_ordered TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'En Camino'
-        );
-        """)
-
-        # Tabla de Cuentas de Clientes (Login y Registro Normal de Clientes)
+        # 8. Cuentas de Clientes (Web Pública)
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS customers (
             id TEXT PRIMARY KEY,
