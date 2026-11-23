@@ -63,6 +63,22 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def add_no_stale_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if (
+        path in ("/", "/solicitar")
+        or path.startswith("/pieza/")
+        or path.startswith("/static/js/")
+        or path.startswith("/static/css/")
+    ):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
+
 @app.on_event("startup")
 def startup_event():
     init_db()

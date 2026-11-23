@@ -1,5 +1,5 @@
 // ==========================================================
-// AUTH.JS — AUTENTICACIÓN NORMAL DE CLIENTES (SASTRERÍA ALL LOOK)
+// CUSTOMER_AUTH_V3.JS — AUTENTICACIÓN NORMAL DE CLIENTES (ALL LOOK)
 // ==========================================================
 
 const CUSTOMER_STORAGE_KEY = 'alllook_customer_user';
@@ -187,10 +187,16 @@ function applyCustomerDataToForms(cust) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initCustomerAuth() {
   renderCustomerAuthNav();
   const activeCust = getCurrentCustomer();
   if (activeCust) {
     applyCustomerDataToForms(activeCust);
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCustomerAuth);
+} else {
+  initCustomerAuth();
+}

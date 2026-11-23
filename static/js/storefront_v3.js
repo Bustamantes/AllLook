@@ -1,11 +1,11 @@
 // ==========================================================
-// CLIENTE.JS — TIENDA MULTI-PÁGINA (SASTRERÍA ALL LOOK)
+// STOREFRONT_V3.JS — TIENDA MULTI-PÁGINA (SASTRERÍA ALL LOOK)
 // ==========================================================
 
 let publicCatalogItems = [];
 let activeCategory = 'all';
 
-document.addEventListener('DOMContentLoaded', () => {
+function initStorefront() {
   if (window.lucide) lucide.createIcons();
 
   if (document.getElementById('client-catalog-grid')) {
@@ -17,7 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('sol-panel-medida')) {
     initSolicitarPage();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initStorefront);
+} else {
+  initStorefront();
+}
 
 function escapeHtml(text) {
   if (text === null || text === undefined) return '';
@@ -34,12 +40,28 @@ function escapeHtml(text) {
 // ==========================================================
 
 async function loadPublicCatalog() {
+  const grid = document.getElementById('client-catalog-grid');
   try {
     const res = await fetch('/api/public/catalog');
-    publicCatalogItems = await res.json();
+    const data = await res.json();
+    if (!res.ok || !Array.isArray(data)) {
+      throw new Error(data.detail || 'No se pudo cargar la colección de piezas.');
+    }
+    publicCatalogItems = data;
     renderPublicCatalog();
   } catch (err) {
     console.error('Error cargando catálogo:', err);
+    if (grid) {
+      grid.innerHTML = `
+        <div class="col-span-full p-10 rounded-2xl bg-white border border-[#BEB5A9] text-center space-y-3">
+          <p class="text-sm font-bold text-[#291C0E]">No pudimos cargar las piezas en este momento.</p>
+          <p class="text-xs text-[#6E473B]">${escapeHtml(err.message || 'Error de conexión')}</p>
+          <button onclick="loadPublicCatalog()" class="px-5 py-2.5 rounded-xl bg-[#6E473B] hover:bg-[#291C0E] text-white text-xs font-bold transition">
+            Reintentar
+          </button>
+        </div>
+      `;
+    }
   }
 }
 
@@ -47,12 +69,16 @@ function filterCategory(cat) {
   activeCategory = cat;
   document.querySelectorAll('.cat-pill').forEach(btn => {
     btn.classList.remove('bg-[#6E473B]', 'text-white', 'border-[#6E473B]');
-    btn.classList.add('bg-[#FAF7F2]', 'text-[#291C0E]', 'border-[#BEB5A9]');
+    btn.classList.add('bg-[#FAF7F2]', 'text-[#291C0E]', 'border-[#BEB5A9]', 'hover:bg-[#E1D4C2]');
+    btn.style.backgroundColor = '';
+    btn.style.color = '';
   });
   const activeBtn = document.getElementById(`cat-btn-${cat}`);
   if (activeBtn) {
-    activeBtn.classList.remove('bg-[#FAF7F2]', 'text-[#291C0E]', 'border-[#BEB5A9]');
+    activeBtn.classList.remove('bg-[#FAF7F2]', 'text-[#291C0E]', 'border-[#BEB5A9]', 'hover:bg-[#E1D4C2]');
     activeBtn.classList.add('bg-[#6E473B]', 'text-white', 'border-[#6E473B]');
+    activeBtn.style.backgroundColor = '#6E473B';
+    activeBtn.style.color = '#FFFFFF';
   }
   renderPublicCatalog();
 }
@@ -61,9 +87,9 @@ function renderPublicCatalog() {
   const grid = document.getElementById('client-catalog-grid');
   if (!grid) return;
 
-  let items = publicCatalogItems;
+  let items = Array.isArray(publicCatalogItems) ? publicCatalogItems : [];
   if (activeCategory !== 'all') {
-    items = items.filter(i => i.category.toLowerCase().includes(activeCategory.toLowerCase()));
+    items = items.filter(i => (i.category || '').toLowerCase().includes(activeCategory.toLowerCase()));
   }
 
   if (items.length === 0) {

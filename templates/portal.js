@@ -71,10 +71,16 @@ function openModal(id) {
 // INICIALIZACIÓN Y AUTENTICACIÓN
 // ==========================================================
 
-document.addEventListener('DOMContentLoaded', async () => {
+async function initStaffPortal() {
   if (window.lucide) lucide.createIcons();
   await checkExistingStaffSession();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initStaffPortal);
+} else {
+  initStaffPortal();
+}
 
 async function checkExistingStaffSession() {
   try {
