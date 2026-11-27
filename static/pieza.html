@@ -6,38 +6,31 @@
   <title>Desglose de Pieza — Sastrería All Look</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/static/css/styles.css?v=3.2">
+  <link rel="stylesheet" href="/static/css/styles.css?v=4.0">
 </head>
-<body class="bg-[#FAF7F2] text-[#291C0E] antialiased selection:bg-[#E1D4C2] selection:text-[#291C0E]">
+<body class="bg-[#F6F1EA] text-[#291C0E] antialiased">
 
   <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
-  <header class="sticky top-0 z-40 bg-white border-b border-[#BEB5A9]/50 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-      <a href="/" class="flex items-center space-x-3 group">
-        <div class="w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-[#BEB5A9]/50 bg-white shrink-0">
-          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
-        </div>
-        <div>
-          <span class="font-serif-luxury text-2xl font-bold tracking-wide text-[#291C0E] block leading-none">All Look</span>
-          <span class="text-[11px] text-[#6E473B] uppercase tracking-widest font-bold">Alta Sastrería & Boutique</span>
-        </div>
+  <header class="site-header sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 h-[72px] flex items-center justify-between gap-6">
+      <a href="/" class="flex items-center gap-3 shrink-0">
+        <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-9 h-9 object-cover border border-[#291C0E]/15">
+        <span class="font-mono text-[12px] font-semibold tracking-[0.3em] uppercase text-[#291C0E]">All Look</span>
       </a>
-
-      <div class="flex items-center space-x-3">
-        <a href="/solicitar"
-           class="hidden sm:inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-[#6E473B] text-[#6E473B] hover:bg-[#6E473B] hover:text-white transition">
-          <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
-          <span>Solicitar Otra Pieza</span>
-        </a>
-        <div id="auth-nav-container"></div>
-      </div>
+      <nav class="hidden md:flex items-center gap-9">
+        <a href="/#piezas" class="nav-link">Colección</a>
+        <a href="/solicitar?tipo=medida" class="nav-link">A la medida</a>
+        <a href="/solicitar?tipo=arreglo" class="nav-link">Arreglos</a>
+        <a href="/solicitar?tipo=reglas" class="nav-link">Proceso</a>
+      </nav>
+      <div id="auth-nav-container" class="shrink-0"></div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
     <!-- Breadcrumb -->
     <div>
-      <a href="/#piezas" class="inline-flex items-center space-x-2 text-xs font-bold text-[#6E473B] hover:text-[#291C0E] transition">
+      <a href="/#piezas" class="inline-flex items-center gap-2 mono-label text-[#6E473B] hover:text-[#291C0E] transition">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         <span>Volver a la Colección de Piezas</span>
       </a>
@@ -57,8 +50,8 @@
     <div id="piece-detail-content" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
       <!-- Columna Imagen -->
       <div class="lg:col-span-6 space-y-4">
-        <div class="rounded-3xl bg-white border border-[#BEB5A9] p-3 shadow-lg">
-          <div class="h-[480px] sm:h-[560px] rounded-2xl overflow-hidden bg-[#FAF7F2]">
+        <div class="lg:sticky lg:top-24">
+          <div class="aspect-[3/4] overflow-hidden bg-[#EFE7DC]">
             <img id="pd-image" src="" alt="" class="w-full h-full object-cover object-top">
           </div>
         </div>
@@ -66,51 +59,51 @@
 
       <!-- Columna Desglose y Solicitud -->
       <div class="lg:col-span-6 space-y-6">
-        <div class="bg-white rounded-3xl border border-[#BEB5A9] p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="space-y-7 lg:pl-6">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <span id="pd-category" class="px-3 py-1 rounded-full text-xs font-bold bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9]"></span>
+            <span id="pd-category" class="eyebrow"></span>
             <span id="pd-stock-badge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
           </div>
 
           <div class="space-y-2">
-            <h1 id="pd-name" class="font-serif-luxury text-3xl sm:text-4xl font-bold text-[#291C0E] leading-tight"></h1>
+            <h1 id="pd-name" class="display-lg text-[#291C0E]"></h1>
             <p id="pd-description" class="text-sm text-[#6E473B] leading-relaxed"></p>
           </div>
 
           <div class="flex items-baseline justify-between border-y border-[#BEB5A9]/40 py-4">
             <div>
-              <span class="text-xs text-[#A78D78] font-bold uppercase block">Precio de Pieza</span>
-              <span id="pd-price" class="text-3xl font-black text-[#291C0E] font-mono"></span>
+              <span class="mono-label text-[#A78D78] block mb-1">Precio de pieza</span>
+              <span id="pd-price" class="font-serif-luxury text-4xl text-[#291C0E]"></span>
             </div>
             <span class="text-xs text-[#6E473B] font-semibold">Incluye revisión de Control de Calidad</span>
           </div>
 
           <!-- Desglose Técnico -->
           <div class="space-y-3">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-[#A78D78]">Desglose de la Prenda</h3>
+            <h3 class="mono-label text-[#A78D78]">Desglose de la prenda</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
-                <span class="text-[#A78D78] font-bold block">Talla Exhibida</span>
+                <span class="mono-label text-[#A78D78] block mb-1">Talla Exhibida</span>
                 <strong id="pd-size" class="text-[#291C0E] text-sm"></strong>
               </div>
               <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
-                <span class="text-[#A78D78] font-bold block">Color</span>
+                <span class="mono-label text-[#A78D78] block mb-1">Color</span>
                 <strong id="pd-color" class="text-[#291C0E] text-sm"></strong>
               </div>
               <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
-                <span class="text-[#A78D78] font-bold block">Corte / Estilo</span>
+                <span class="mono-label text-[#A78D78] block mb-1">Corte / Estilo</span>
                 <strong id="pd-style" class="text-[#291C0E] text-sm"></strong>
               </div>
               <div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
-                <span class="text-[#A78D78] font-bold block">Tiempo de Entrega</span>
+                <span class="mono-label text-[#A78D78] block mb-1">Tiempo de Entrega</span>
                 <strong id="pd-delivery" class="text-[#291C0E] text-xs"></strong>
               </div>
               <div class="sm:col-span-2 p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
-                <span class="text-[#A78D78] font-bold block">Tejido & Composición</span>
+                <span class="mono-label text-[#A78D78] block mb-1">Tejido & Composición</span>
                 <strong id="pd-fabric" class="text-[#291C0E] text-xs leading-relaxed"></strong>
               </div>
               <div class="sm:col-span-2 p-3.5 rounded-xl bg-[#FAF7F2] border border-[#BEB5A9]/50">
-                <span class="text-[#A78D78] font-bold block">Cuidados Recomendados</span>
+                <span class="mono-label text-[#A78D78] block mb-1">Cuidados Recomendados</span>
                 <p id="pd-care" class="text-[#6E473B] text-xs mt-0.5 leading-relaxed"></p>
               </div>
             </div>
@@ -181,28 +174,45 @@
     <!-- Piezas Relacionadas -->
     <section id="related-section" class="hidden space-y-6 pt-6 border-t border-[#BEB5A9]/40">
       <div class="flex items-center justify-between">
-        <h2 class="font-serif-luxury text-2xl font-bold text-[#291C0E]">Otras Piezas de la Colección</h2>
-        <a href="/#piezas" class="text-xs font-bold text-[#6E473B] hover:underline">Ver todas</a>
+        <h2 class="display-lg text-[#291C0E] !text-4xl">Otras piezas <em class="text-[#6E473B]">de la colección</em></h2>
+        <a href="/#piezas" class="link-underline text-[#291C0E]">Ver todas</a>
       </div>
-      <div id="related-catalog-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-6"></div>
+      <div id="related-catalog-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-8"></div>
     </section>
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-[#291C0E] text-[#E1D4C2] border-t border-[#422F1C] py-12 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#BEB5A9]">
-      <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-lg overflow-hidden bg-white border border-[#422F1C]">
-          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
+  <footer class="relative overflow-hidden bg-[#291C0E] text-[#E1D4C2]">
+    <div aria-hidden="true" class="outline-text outline-text-light absolute -bottom-10 right-0 text-[16vw] hidden md:block">ALL LOOK</div>
+    <div class="relative max-w-7xl mx-auto px-5 sm:px-8 pt-20 pb-10 space-y-16">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+        <div class="md:col-span-5 space-y-5">
+          <p class="font-serif-luxury text-5xl text-[#F6F1EA] leading-none">All Look</p>
+          <p class="text-sm text-[#BEB5A9] leading-relaxed max-w-sm">Sastrería de alta costura, confección artesanal a la medida y piezas exclusivas listas para lucir.</p>
         </div>
-        <span class="font-serif-luxury text-lg font-bold text-white">All Look</span>
+        <div class="md:col-span-3 space-y-4">
+          <p class="mono-label text-[#A78D78]">Navegación</p>
+          <ul class="space-y-2.5 text-sm text-[#E1D4C2]">
+            <li><a href="/#piezas" class="hover:text-white transition">Colección de piezas</a></li>
+            <li><a href="/solicitar?tipo=medida" class="hover:text-white transition">Prenda a la medida</a></li>
+            <li><a href="/solicitar?tipo=arreglo" class="hover:text-white transition">Arreglo de prenda</a></li>
+            <li><a href="/solicitar?tipo=reglas" class="hover:text-white transition">Proceso &amp; garantías</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-4 space-y-4">
+          <p class="mono-label text-[#A78D78]">Taller central</p>
+          <div class="space-y-1.5 text-sm text-[#E1D4C2]">
+            <p>Calle 50 y Ave. Principal, Local 4B</p>
+            <p>Lunes a viernes · 8:00 – 18:00</p>
+            <p>Sábados · 9:00 – 16:00</p>
+            <p class="font-mono text-[#F6F1EA] pt-2">+507 6234-8891</p>
+          </div>
+        </div>
       </div>
-      <div class="flex items-center space-x-5">
-        <a href="/" class="hover:text-white">Colección</a>
-        <a href="/solicitar?tipo=medida" class="hover:text-white">Solicitar a Medida</a>
-        <a href="/solicitar?tipo=reglas" class="hover:text-white">Reglas y Garantías</a>
+      <div class="flex flex-col sm:flex-row justify-between gap-3 border-t border-[#E1D4C2]/15 pt-6 mono-label text-[#A78D78]">
+        <span>© 2026 Sastrería All Look</span>
+        <span>Hecho a mano · Panamá</span>
       </div>
-      <p>© 2026 Sastrería All Look.</p>
     </div>
   </footer>
 
@@ -268,7 +278,7 @@
     </div>
   </div>
 
-  <script src="/static/js/customer_auth_v3.js?v=3.2"></script>
-  <script src="/static/js/storefront_v3.js?v=3.2"></script>
+  <script src="/static/js/customer_auth_v3.js?v=4.0"></script>
+  <script src="/static/js/storefront_v3.js?v=4.0"></script>
 </body>
 </html>

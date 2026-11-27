@@ -34,14 +34,15 @@ function renderCustomerAuthNav() {
 
   const cust = getCurrentCustomer();
   if (cust) {
+    const esc = (t) => String(t || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     container.innerHTML = `
-      <div class="inline-flex items-center space-x-2.5 bg-[#FAF7F2] border border-[#BEB5A9] px-3 py-1.5 rounded-xl text-xs">
-        <span class="w-7 h-7 rounded-lg bg-[#6E473B] text-white font-bold flex items-center justify-center text-[11px] font-mono">
-          ${cust.initials || 'CL'}
+      <div class="inline-flex items-center gap-3 text-xs">
+        <span class="w-8 h-8 bg-[#291C0E] text-[#E1D4C2] flex items-center justify-center text-[11px] font-mono font-semibold">
+          ${esc(cust.initials || 'CL')}
         </span>
         <div class="text-left hidden sm:block">
-          <p class="font-bold text-[#291C0E] text-xs leading-tight">${cust.name}</p>
-          <span class="text-[10px] text-[#6E473B] font-semibold">Cliente Registrado</span>
+          <p class="font-semibold text-[#291C0E] text-xs leading-tight">${esc(cust.name)}</p>
+          <span class="mono-label !text-[9.5px] text-[#A78D78]">Cliente</span>
         </div>
         <button onclick="logoutCustomer()" class="p-1 text-[#A78D78] hover:text-rose-700 transition" title="Cerrar sesión">
           <i data-lucide="log-out" class="w-4 h-4"></i>
@@ -50,14 +51,12 @@ function renderCustomerAuthNav() {
     `;
   } else {
     container.innerHTML = `
-      <div class="flex items-center space-x-2">
-        <button onclick="openCustomerAuthModal('register')"
-                class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#6E473B] hover:bg-[#291C0E] text-white transition">
-          Crear Cuenta
+      <div class="flex items-center gap-5">
+        <button onclick="openCustomerAuthModal('login')" class="nav-link hidden sm:inline-block">
+          Ingresar
         </button>
-        <button onclick="openCustomerAuthModal('login')"
-                class="px-3.5 py-2 rounded-xl text-xs font-bold border border-[#BEB5A9] bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2] transition">
-          Iniciar Sesión
+        <button onclick="openCustomerAuthModal('register')" class="btn btn-outline btn-sm">
+          Crear cuenta
         </button>
       </div>
     `;

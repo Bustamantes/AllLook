@@ -1,86 +1,260 @@
-/* Estilos personalizados para Sastrería All Look — Paleta Oficial Uxintace:
-   #291C0E (Espresso Chocolate)
-   #6E473B (Chestnut Terracotta)
-   #A78D78 (Warm Taupe)
-   #BEB5A9 (Soft Greige)
-   #E1D4C2 (Warm Oat Cream)
-*/
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap');
+/* ==========================================================
+   ALL LOOK — Sistema visual editorial (v4)
+   Paleta: #291C0E espresso · #6E473B chestnut · #A78D78 taupe
+           #BEB5A9 greige · #E1D4C2 oat · #F6F1EA papel
+   Tipos:  DM Serif Display (titulares) · Inter (texto)
+           JetBrains Mono (etiquetas / datos)
+   Sin degradados. Esquinas rectas. Líneas finas.
+   ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --palette-espresso: #291C0E;
-  --palette-chestnut: #6E473B;
-  --palette-taupe: #A78D78;
-  --palette-greige: #BEB5A9;
-  --palette-cream: #E1D4C2;
-  --palette-surface: #FAF7F2;
-  --palette-white: #FFFFFF;
+  --ink: #291C0E;
+  --chestnut: #6E473B;
+  --taupe: #A78D78;
+  --greige: #BEB5A9;
+  --oat: #E1D4C2;
+  --paper: #F6F1EA;
+  --paper-2: #EFE7DC;
+  --line: rgba(41, 28, 14, 0.14);
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background-color: var(--palette-surface);
-  color: var(--palette-espresso);
+  font-family: var(--sans);
+  background-color: var(--paper) !important;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
 
+::selection { background: var(--oat); color: var(--ink); }
+
+/* ---------- Tipografía ---------- */
 .font-serif-luxury {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+}
+.font-mono { font-family: var(--mono) !important; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--chestnut);
+}
+.mono-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
-/* Scrollbar estilizada en tonos de la paleta */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+.display-xl {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  font-size: clamp(4rem, 11vw, 9.5rem);
 }
-::-webkit-scrollbar-track {
-  background: #F4EFEA;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--palette-greige);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--palette-taupe);
+.display-lg {
+  font-family: var(--serif);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.4rem, 5vw, 4rem);
 }
 
-/* Efectos visuales para tarjetas del catálogo */
-.catalog-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+/* Texto en contorno (decorativo de fondo) */
+.outline-text {
+  font-family: var(--serif);
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(41, 28, 14, 0.10);
+  line-height: 0.8;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
 }
-.catalog-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 28px -10px rgba(41, 28, 14, 0.16);
+.outline-text-light { -webkit-text-stroke: 1px rgba(225, 212, 194, 0.12); }
+
+/* ---------- Esquinas rectas en todo el sitio ---------- */
+.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl, .rounded-full, .rounded {
+  border-radius: 2px !important;
 }
+.shadow-xl, .shadow-lg, .shadow-md, .shadow-2xl { box-shadow: 0 30px 60px -30px rgba(41, 28, 14, 0.25) !important; }
+.shadow-sm, .shadow-xs { box-shadow: none !important; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 1.05rem 1.6rem;
+  transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+  cursor: pointer;
+}
+.btn-primary { background: var(--chestnut); color: #fff; border: 1px solid var(--chestnut); }
+.btn-primary:hover { background: var(--ink); border-color: var(--ink); }
+.btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.btn-outline:hover { background: var(--ink); color: var(--paper); }
+.btn-light { background: var(--oat); color: var(--ink); border: 1px solid var(--oat); }
+.btn-light:hover { background: #fff; border-color: #fff; }
+.btn-sm { padding: .6rem 1rem; font-size: 10.5px; }
+
+.link-underline {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+  transition: color .2s ease, gap .2s ease;
+}
+.link-underline:hover { color: var(--chestnut); gap: .8rem; }
+
+/* ---------- Navegación ---------- */
+.site-header {
+  background: rgba(246, 241, 234, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  position: relative;
+  padding: 4px 0;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  height: 1px; width: 0;
+  background: var(--chestnut);
+  transition: width .25s ease;
+}
+.nav-link:hover::after, .nav-link.is-active::after { width: 100%; }
+
+/* ---------- Hero ---------- */
+.hero-diagonal {
+  position: absolute;
+  inset: 0;
+  background: var(--paper-2);
+  clip-path: polygon(62% 0, 100% 0, 100% 100%, 38% 100%);
+}
+.hero-figure img { filter: grayscale(100%) contrast(1.08); }
+.hero-figure::after {
+  content: '';
+  position: absolute;
+  inset: 14px -14px -14px 14px;
+  border: 1px solid var(--chestnut);
+  z-index: -1;
+}
+
+/* Animación de entrada sutil */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+.rise-1 { animation-delay: .05s; } .rise-2 { animation-delay: .15s; }
+.rise-3 { animation-delay: .25s; } .rise-4 { animation-delay: .35s; }
+@media (prefers-reduced-motion: reduce) { .rise { animation: none; } }
+
+/* ---------- Filtros de categoría ---------- */
+.cat-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--taupe);
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+  transition: color .2s ease, border-color .2s ease;
+}
+.cat-pill:hover { color: var(--ink); }
+.cat-pill.is-active { color: var(--ink); border-bottom-color: var(--chestnut); }
+
+/* ---------- Tarjetas del catálogo ---------- */
+.catalog-card { display: block; }
 .catalog-img-container {
   overflow: hidden;
   position: relative;
-  background: #EFE9E0;
+  background: var(--paper-2);
+  aspect-ratio: 3 / 4;
 }
 .catalog-img-container img {
-  transition: transform 0.4s ease;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top;
+  filter: grayscale(35%);
+  transition: transform .9s cubic-bezier(.2,.7,.2,1), filter .5s ease;
 }
-.catalog-card:hover .catalog-img-container img {
-  transform: scale(1.04);
+.catalog-card:hover .catalog-img-container img { transform: scale(1.045); filter: grayscale(0); }
+.catalog-card .card-cta {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  transform: translateY(100%);
+  transition: transform .35s ease;
+}
+.catalog-card:hover .card-cta { transform: none; }
+.catalog-card h3 a, .catalog-card h3 { transition: color .2s ease; }
+.catalog-card:hover h3 { color: var(--chestnut); }
+
+/* ---------- Formularios ---------- */
+input[type="text"], input[type="email"], input[type="tel"], input[type="password"],
+input[type="date"], select, textarea {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  background-color: #FBF8F3 !important;
+  border-color: var(--greige) !important;
+  transition: border-color .2s ease, background-color .2s ease;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  background-color: #fff !important;
+  border-color: var(--chestnut) !important;
+  box-shadow: 0 0 0 3px rgba(110, 71, 59, 0.08);
+}
+label { letter-spacing: 0.01em; }
+
+/* Bloques blancos más cálidos */
+.bg-white { background-color: #FCFAF6 !important; }
+
+/* ---------- Pasos del proceso ---------- */
+.step-cell { border-left: 1px solid var(--line); }
+.step-cell:first-child { border-left: none; }
+@media (max-width: 767px) {
+  .step-cell { border-left: none; border-top: 1px solid var(--line); }
+  .step-cell:first-child { border-top: none; }
 }
 
-/* Estilos de impresión para facturas y recibos */
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--greige); }
+::-webkit-scrollbar-thumb:hover { background: var(--taupe); }
+
+/* ---------- Impresión ---------- */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  #printable-receipt-modal, #printable-receipt-modal * {
-    visibility: visible;
-  }
+  body * { visibility: hidden; }
+  #printable-receipt-modal, #printable-receipt-modal * { visibility: visible; }
   #printable-receipt-modal {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background: white !important;
+    position: absolute; left: 0; top: 0; width: 100%;
+    margin: 0; padding: 0; background: white !important;
   }
-  .no-print {
-    display: none !important;
-  }
+  .no-print { display: none !important; }
 }

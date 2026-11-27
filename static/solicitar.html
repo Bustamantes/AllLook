@@ -6,48 +6,39 @@
   <title>Solicitar Otro Producto e Información — Sastrería All Look</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/static/css/styles.css?v=3.2">
+  <link rel="stylesheet" href="/static/css/styles.css?v=4.0">
 </head>
-<body class="bg-[#FAF7F2] text-[#291C0E] antialiased selection:bg-[#E1D4C2] selection:text-[#291C0E]">
+<body class="bg-[#F6F1EA] text-[#291C0E] antialiased">
 
   <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
-  <header class="sticky top-0 z-40 bg-white border-b border-[#BEB5A9]/50 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-      <a href="/" class="flex items-center space-x-3 group">
-        <div class="w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-[#BEB5A9]/50 bg-white shrink-0">
-          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
-        </div>
-        <div>
-          <span class="font-serif-luxury text-2xl font-bold tracking-wide text-[#291C0E] block leading-none">All Look</span>
-          <span class="text-[11px] text-[#6E473B] uppercase tracking-widest font-bold">Alta Sastrería & Boutique</span>
-        </div>
+  <header class="site-header sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 h-[72px] flex items-center justify-between gap-6">
+      <a href="/" class="flex items-center gap-3 shrink-0">
+        <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-9 h-9 object-cover border border-[#291C0E]/15">
+        <span class="font-mono text-[12px] font-semibold tracking-[0.3em] uppercase text-[#291C0E]">All Look</span>
       </a>
-
-      <div class="flex items-center space-x-3">
-        <a href="/#piezas"
-           class="hidden sm:inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-[#BEB5A9] bg-[#FAF7F2] text-[#291C0E] hover:bg-[#E1D4C2] transition">
-          <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-[#6E473B]"></i>
-          <span>Ver Colección</span>
-        </a>
-        <div id="auth-nav-container"></div>
-      </div>
+      <nav class="hidden md:flex items-center gap-9">
+        <a href="/#piezas" class="nav-link">Colección</a>
+        <a href="/solicitar?tipo=medida" class="nav-link">A la medida</a>
+        <a href="/solicitar?tipo=arreglo" class="nav-link">Arreglos</a>
+        <a href="/solicitar?tipo=reglas" class="nav-link">Proceso</a>
+      </nav>
+      <div id="auth-nav-container" class="shrink-0"></div>
     </div>
   </header>
 
   <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
     <div>
-      <a href="/#piezas" class="inline-flex items-center space-x-2 text-xs font-bold text-[#6E473B] hover:text-[#291C0E] transition">
+      <a href="/#piezas" class="inline-flex items-center gap-2 mono-label text-[#6E473B] hover:text-[#291C0E] transition">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         <span>Volver a la Colección de Piezas</span>
       </a>
     </div>
 
-    <div class="space-y-2">
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9] inline-block">
-        Atención de Sastrería
-      </span>
-      <h1 class="font-serif-luxury text-3xl sm:text-4xl font-bold text-[#291C0E]">
-        Solicitar Otro Producto, Confección o Información
+    <div class="space-y-4 pt-4">
+      <p class="eyebrow">Atención de sastrería</p>
+      <h1 class="display-lg text-[#291C0E]">
+        Solicitar otro producto, <em class="text-[#6E473B]">confección o información</em>
       </h1>
       <p class="text-sm text-[#6E473B] max-w-2xl leading-relaxed">
         Elija la subpestaña según lo que necesite. Todas las solicitudes llegan directamente a nuestro Mostrador / Caja para coordinar su atención con el Sastre Patronista.
@@ -55,7 +46,7 @@
     </div>
 
     <!-- SUBPESTAÑAS -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 rounded-2xl bg-white border border-[#BEB5A9] text-xs font-bold">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-0 border border-[#291C0E]/20 font-mono uppercase tracking-[0.14em] text-[11px] font-semibold">
       <button id="sol-tab-medida" onclick="switchSolicitarTab('medida')" class="py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2 bg-[#6E473B] text-white">
         <i data-lucide="scissors" class="w-4 h-4"></i>
         <span>Otro Producto / A la Medida</span>
@@ -211,17 +202,17 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
           <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1.5">
-            <span class="font-mono font-bold text-[#6E473B]">01. RECEPCIÓN EN MOSTRADOR</span>
+            <span class="mono-label text-[#6E473B]">01. RECEPCIÓN EN MOSTRADOR</span>
             <p class="font-bold text-[#291C0E]">Toma de Pedido & Anticipo</p>
             <p class="text-[#6E473B]">Mostrador / Caja formaliza su orden, fecha de entrega y anticipo mínimo del 50% en confección a la medida.</p>
           </div>
           <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1.5">
-            <span class="font-mono font-bold text-[#6E473B]">02. SASTRE PATRONISTA</span>
+            <span class="mono-label text-[#6E473B]">02. SASTRE PATRONISTA</span>
             <p class="font-bold text-[#291C0E]">Medidas Exactas & Corte</p>
             <p class="text-[#6E473B]">El Sastre Patronista toma sus medidas anatómicas, solicita las telas exactas y arma la pieza artesanalmente.</p>
           </div>
           <div class="p-4 rounded-2xl bg-[#FAF7F2] border border-[#BEB5A9]/60 space-y-1.5">
-            <span class="font-mono font-bold text-[#6E473B]">03. CONTROL DE CALIDAD</span>
+            <span class="mono-label text-[#6E473B]">03. CONTROL DE CALIDAD</span>
             <p class="font-bold text-[#291C0E]">Inspección Rigurosa</p>
             <p class="text-[#6E473B]">Ninguna prenda sale del taller sin revisión de costuras, medidas exactas y acabados limpios.</p>
           </div>
@@ -252,20 +243,37 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-[#291C0E] text-[#E1D4C2] border-t border-[#422F1C] py-12 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#BEB5A9]">
-      <div class="flex items-center space-x-2.5">
-        <div class="w-8 h-8 rounded-lg overflow-hidden bg-white border border-[#422F1C]">
-          <img src="/static/img/logo.jpg" alt="Logo All Look" class="w-full h-full object-cover">
+  <footer class="relative overflow-hidden bg-[#291C0E] text-[#E1D4C2]">
+    <div aria-hidden="true" class="outline-text outline-text-light absolute -bottom-10 right-0 text-[16vw] hidden md:block">ALL LOOK</div>
+    <div class="relative max-w-7xl mx-auto px-5 sm:px-8 pt-20 pb-10 space-y-16">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+        <div class="md:col-span-5 space-y-5">
+          <p class="font-serif-luxury text-5xl text-[#F6F1EA] leading-none">All Look</p>
+          <p class="text-sm text-[#BEB5A9] leading-relaxed max-w-sm">Sastrería de alta costura, confección artesanal a la medida y piezas exclusivas listas para lucir.</p>
         </div>
-        <span class="font-serif-luxury text-lg font-bold text-white">All Look</span>
+        <div class="md:col-span-3 space-y-4">
+          <p class="mono-label text-[#A78D78]">Navegación</p>
+          <ul class="space-y-2.5 text-sm text-[#E1D4C2]">
+            <li><a href="/#piezas" class="hover:text-white transition">Colección de piezas</a></li>
+            <li><a href="/solicitar?tipo=medida" class="hover:text-white transition">Prenda a la medida</a></li>
+            <li><a href="/solicitar?tipo=arreglo" class="hover:text-white transition">Arreglo de prenda</a></li>
+            <li><a href="/solicitar?tipo=reglas" class="hover:text-white transition">Proceso &amp; garantías</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-4 space-y-4">
+          <p class="mono-label text-[#A78D78]">Taller central</p>
+          <div class="space-y-1.5 text-sm text-[#E1D4C2]">
+            <p>Calle 50 y Ave. Principal, Local 4B</p>
+            <p>Lunes a viernes · 8:00 – 18:00</p>
+            <p>Sábados · 9:00 – 16:00</p>
+            <p class="font-mono text-[#F6F1EA] pt-2">+507 6234-8891</p>
+          </div>
+        </div>
       </div>
-      <div class="flex items-center space-x-5">
-        <a href="/" class="hover:text-white">Colección de Piezas</a>
-        <a href="/solicitar?tipo=medida" class="hover:text-white">A la Medida</a>
-        <a href="/solicitar?tipo=arreglo" class="hover:text-white">Arreglos</a>
+      <div class="flex flex-col sm:flex-row justify-between gap-3 border-t border-[#E1D4C2]/15 pt-6 mono-label text-[#A78D78]">
+        <span>© 2026 Sastrería All Look</span>
+        <span>Hecho a mano · Panamá</span>
       </div>
-      <p>© 2026 Sastrería All Look.</p>
     </div>
   </footer>
 
@@ -331,7 +339,7 @@
     </div>
   </div>
 
-  <script src="/static/js/customer_auth_v3.js?v=3.2"></script>
-  <script src="/static/js/storefront_v3.js?v=3.2"></script>
+  <script src="/static/js/customer_auth_v3.js?v=4.0"></script>
+  <script src="/static/js/storefront_v3.js?v=4.0"></script>
 </body>
 </html>

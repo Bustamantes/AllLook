@@ -67,19 +67,9 @@ async function loadPublicCatalog() {
 
 function filterCategory(cat) {
   activeCategory = cat;
-  document.querySelectorAll('.cat-pill').forEach(btn => {
-    btn.classList.remove('bg-[#6E473B]', 'text-white', 'border-[#6E473B]');
-    btn.classList.add('bg-[#FAF7F2]', 'text-[#291C0E]', 'border-[#BEB5A9]', 'hover:bg-[#E1D4C2]');
-    btn.style.backgroundColor = '';
-    btn.style.color = '';
-  });
+  document.querySelectorAll('.cat-pill').forEach(btn => btn.classList.remove('is-active'));
   const activeBtn = document.getElementById(`cat-btn-${cat}`);
-  if (activeBtn) {
-    activeBtn.classList.remove('bg-[#FAF7F2]', 'text-[#291C0E]', 'border-[#BEB5A9]', 'hover:bg-[#E1D4C2]');
-    activeBtn.classList.add('bg-[#6E473B]', 'text-white', 'border-[#6E473B]');
-    activeBtn.style.backgroundColor = '#6E473B';
-    activeBtn.style.color = '#FFFFFF';
-  }
+  if (activeBtn) activeBtn.classList.add('is-active');
   renderPublicCatalog();
 }
 
@@ -93,52 +83,39 @@ function renderPublicCatalog() {
   }
 
   if (items.length === 0) {
-    grid.innerHTML = `<div class="col-span-full p-12 text-center text-[#A78D78]">No hay piezas disponibles en esta categoría actualmente.</div>`;
+    grid.innerHTML = `<div class="col-span-full py-16 text-center mono-label text-[#A78D78]">No hay piezas disponibles en esta categoría actualmente.</div>`;
     return;
   }
 
-  grid.innerHTML = items.map(item => `
-    <article class="catalog-card bg-white rounded-2xl border border-[#BEB5A9]/60 shadow-sm overflow-hidden flex flex-col justify-between group">
-      <div>
-        <a href="/pieza/${item.id}" class="block catalog-img-container h-80 w-full relative bg-[#FAF7F2]">
-          <img src="${escapeHtml(item.image_url || '/static/img/suit_grey.jpg')}"
-               alt="${escapeHtml(item.name)}"
-               class="w-full h-full object-cover object-top"
-               loading="lazy"
-               onerror="this.onerror=null; this.src='/static/img/suit_grey.jpg';">
-          <div class="absolute top-3 right-3">
-            <span class="px-2.5 py-1 text-xs font-bold rounded-full shadow-sm ${item.stock > 0 ? 'bg-emerald-700 text-white' : 'bg-[#6E473B] text-white'}">
-              ${item.stock > 0 ? `${item.stock} disponibles` : 'Bajo Pedido'}
-            </span>
-          </div>
-        </a>
-
-        <div class="p-5 space-y-2.5">
-          <div class="flex items-center justify-between text-xs">
-            <span class="px-2.5 py-0.5 font-bold rounded-full bg-[#E1D4C2] text-[#291C0E] border border-[#BEB5A9]">${escapeHtml(item.category)}</span>
-            <span class="text-[#A78D78] font-semibold">${escapeHtml(item.style)}</span>
-          </div>
-          <h3 class="font-serif-luxury font-bold text-[#291C0E] text-lg leading-snug">
-            <a href="/pieza/${item.id}" class="hover:text-[#6E473B] transition">${escapeHtml(item.name)}</a>
+  grid.innerHTML = items.map((item, idx) => `
+    <article class="catalog-card group">
+      <a href="/pieza/${item.id}" class="block catalog-img-container">
+        <img src="${escapeHtml(item.image_url || '/static/img/suit_grey.jpg')}"
+             alt="${escapeHtml(item.name)}"
+             loading="lazy"
+             onerror="this.onerror=null; this.src='/static/img/suit_grey.jpg';">
+        <span class="absolute top-4 left-4 mono-label bg-[#F6F1EA] text-[#291C0E] px-2.5 py-1.5">N° ${String(idx + 1).padStart(2, '0')}</span>
+        <span class="absolute top-4 right-4 mono-label px-2.5 py-1.5 ${item.stock > 0 ? 'bg-[#291C0E] text-[#E1D4C2]' : 'bg-[#6E473B] text-white'}">
+          ${item.stock > 0 ? `${item.stock} disp.` : 'Bajo pedido'}
+        </span>
+        <span class="card-cta bg-[#291C0E] text-[#E1D4C2] mono-label px-5 py-4 flex items-center justify-between">
+          <span>Ver desglose y solicitar</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        </span>
+      </a>
+      <div class="pt-5 space-y-2.5">
+        <div class="flex items-center justify-between mono-label text-[#A78D78]">
+          <span>${escapeHtml(item.category)}</span>
+          <span>${escapeHtml(item.style)}</span>
+        </div>
+        <div class="flex items-baseline justify-between gap-4">
+          <h3 class="font-serif-luxury text-[26px] leading-tight text-[#291C0E]">
+            <a href="/pieza/${item.id}">${escapeHtml(item.name)}</a>
           </h3>
-          <p class="text-xs text-[#6E473B] line-clamp-2 leading-relaxed">${escapeHtml(item.description || '')}</p>
-          <div class="pt-1 flex items-center space-x-2 text-xs">
-            <span class="bg-[#FAF7F2] text-[#291C0E] px-2.5 py-1 rounded-lg border border-[#BEB5A9]/70">Talla: <strong>${escapeHtml(item.size)}</strong></span>
-            <span class="bg-[#FAF7F2] text-[#291C0E] px-2.5 py-1 rounded-lg border border-[#BEB5A9]/70">Color: <strong>${escapeHtml(item.color)}</strong></span>
-          </div>
+          <span class="font-mono text-[15px] font-semibold text-[#291C0E] shrink-0">$${Number(item.price).toFixed(2)}</span>
         </div>
-      </div>
-
-      <div class="px-5 pb-5 pt-3.5 border-t border-[#BEB5A9]/30 flex items-center justify-between bg-[#FAF7F2]/50">
-        <div>
-          <span class="text-[11px] text-[#A78D78] font-medium block">Precio</span>
-          <span class="text-2xl font-black text-[#291C0E] font-mono">$${Number(item.price).toFixed(2)}</span>
-        </div>
-        <a href="/pieza/${item.id}"
-           class="px-4 py-2.5 bg-[#6E473B] hover:bg-[#291C0E] text-white rounded-xl text-xs font-bold transition inline-flex items-center space-x-1.5">
-          <span>Ver Desglose y Solicitar</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </a>
+        <p class="text-[13px] text-[#6E473B] line-clamp-2 leading-relaxed">${escapeHtml(item.description || '')}</p>
+        <p class="mono-label text-[#A78D78] pt-1">Talla ${escapeHtml(item.size)} · ${escapeHtml(item.color)}</p>
       </div>
     </article>
   `).join('');
@@ -186,10 +163,10 @@ async function loadPieceDetail() {
     const stockBadge = document.getElementById('pd-stock-badge');
     if (item.stock > 0) {
       stockBadge.textContent = `${item.stock} disponibles en tienda`;
-      stockBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-700 text-white';
+      stockBadge.className = 'mono-label px-3 py-1.5 bg-[#291C0E] text-[#E1D4C2]';
     } else {
       stockBadge.textContent = 'Disponible bajo pedido';
-      stockBadge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-[#6E473B] text-white';
+      stockBadge.className = 'mono-label px-3 py-1.5 bg-[#6E473B] text-white';
     }
 
     loadingEl.classList.add('hidden');
@@ -199,16 +176,16 @@ async function loadPieceDetail() {
       const relSection = document.getElementById('related-section');
       const relGrid = document.getElementById('related-catalog-grid');
       relGrid.innerHTML = data.related.map(r => `
-        <a href="/pieza/${r.id}" class="catalog-card bg-white rounded-2xl border border-[#BEB5A9]/60 overflow-hidden flex flex-col">
-          <div class="h-56 bg-[#FAF7F2] overflow-hidden">
-            <img src="${escapeHtml(r.image_url || '/static/img/suit_grey.jpg')}" alt="${escapeHtml(r.name)}" class="w-full h-full object-cover object-top">
+        <a href="/pieza/${r.id}" class="catalog-card group">
+          <div class="catalog-img-container">
+            <img src="${escapeHtml(r.image_url || '/static/img/suit_grey.jpg')}" alt="${escapeHtml(r.name)}">
           </div>
-          <div class="p-4 flex items-center justify-between gap-2">
-            <div>
-              <span class="text-[10px] font-bold text-[#6E473B] uppercase">${escapeHtml(r.category)}</span>
-              <h4 class="font-serif-luxury font-bold text-[#291C0E] text-sm">${escapeHtml(r.name)}</h4>
+          <div class="pt-4 space-y-1.5">
+            <span class="mono-label text-[#A78D78]">${escapeHtml(r.category)}</span>
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-serif-luxury text-xl text-[#291C0E]">${escapeHtml(r.name)}</h3>
+              <span class="font-mono font-semibold text-[#291C0E] text-sm shrink-0">$${Number(r.price).toFixed(2)}</span>
             </div>
-            <span class="font-mono font-bold text-[#291C0E] text-sm">$${Number(r.price).toFixed(2)}</span>
           </div>
         </a>
       `).join('');
